@@ -103,6 +103,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
   const handleApply = (job: Job) => {
     setSelectedJob(job);
     setShowApplyModal(true);
+    setShowViewModal(false);
   };
 
   const handleView = (job: Job) => {
@@ -192,6 +193,9 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
             <p><strong>Title:</strong> {selectedJob.title}</p>
             <p><strong>Description:</strong> {selectedJob.description}</p>
             <p><strong>Categories:</strong> {selectedJob.categories.join(', ')}</p>
+            <button onClick={() => handleApply(selectedJob)} className="mt-4 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              Apply Now
+            </button>
             <button onClick={() => setShowViewModal(false)} className="mt-4 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
               Close
             </button>
