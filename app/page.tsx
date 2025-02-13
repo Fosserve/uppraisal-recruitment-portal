@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import LoginPage from './login/page'
 import RegisterForm from './register/page'
@@ -6,6 +7,7 @@ import HeroSection from './components/hero-section'
 import Explore from './components/ExploreJob'
 import PostJob from './components/jobposting'
 import Timeline from './components/timeline'
+import JobApplicationStepper from './components/stepper'
 
 const page = () => {
   return (
@@ -15,6 +17,8 @@ const page = () => {
       {/* <PostJob /> */}
       <Explore />
       <Timeline />
+      <JobApplicationStepper/>
+      {/* <HorizontalNonLinearStepper /> */}
       
     </div>
   )
