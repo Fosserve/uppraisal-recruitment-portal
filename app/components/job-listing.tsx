@@ -6,7 +6,7 @@ interface Job {
   title: string;
   description: string;
   link: string;
-  category: string;
+  categories: string[];
 }
 
 interface JobListingProps {
@@ -19,70 +19,70 @@ const dummyJobs: Job[] = [
     title: 'Software Engineer',
     description: 'Develop and maintain web applications.',
     link: '#',
-    category: 'Engineering',
+    categories: ['Engineering', 'Trending'],
   },
   {
     $id: '2',
     title: 'Product Manager',
     description: 'Lead product development teams.',
     link: '#',
-    category: 'Management',
+    categories: ['Management', 'Trending'],
   },
   {
     $id: '3',
     title: 'UX Designer',
     description: 'Design user-friendly interfaces.',
     link: '#',
-    category: 'Design',
+    categories: ['Design'],
   },
   {
     $id: '4',
     title: 'Data Scientist',
     description: 'Analyze and interpret complex data.',
     link: '#',
-    category: 'Data',
+    categories: ['Data', 'Trending'],
   },
   {
     $id: '5',
     title: 'DevOps Engineer',
     description: 'Manage and automate infrastructure.',
     link: '#',
-    category: 'Engineering',
+    categories: ['Engineering'],
   },
   {
     $id: '6',
     title: 'Marketing Specialist',
     description: 'Develop and execute marketing strategies.',
     link: '#',
-    category: 'Marketing',
+    categories: ['Marketing'],
   },
   {
     $id: '7',
     title: 'Sales Manager',
     description: 'Lead sales teams to achieve targets.',
     link: '#',
-    category: 'Sales',
+    categories: ['Sales'],
   },
   {
     $id: '8',
     title: 'Customer Support',
     description: 'Provide support to customers.',
     link: '#',
-    category: 'Support',
+    categories: ['Support'],
   },
   {
     $id: '9',
     title: 'Business Analyst',
     description: 'Analyze business processes and requirements.',
     link: '#',
-    category: 'Business',
+    categories: ['Business'],
   },
   {
     $id: '10',
     title: 'HR Manager',
     description: 'Manage human resources and recruitment.',
     link: '#',
-    category: 'HR',
+    categories: ['HR'],
   },
 ];
 
@@ -94,7 +94,9 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
   const [applicantData, setApplicantData] = useState({ name: '', email: '' });
 
   useEffect(() => {
-    const filteredJobs = dummyJobs.filter(job => job.category === category);
+    const filteredJobs = category === 'All' 
+      ? dummyJobs 
+      : dummyJobs.filter(job => job.categories.includes(category));
     setJobs(filteredJobs);
   }, [category]);
 
@@ -189,7 +191,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
             <h3 className="text-xl font-bold mb-4">Job Details</h3>
             <p><strong>Title:</strong> {selectedJob.title}</p>
             <p><strong>Description:</strong> {selectedJob.description}</p>
-            <p><strong>Category:</strong> {selectedJob.category}</p>
+            <p><strong>Categories:</strong> {selectedJob.categories.join(', ')}</p>
             <button onClick={() => setShowViewModal(false)} className="mt-4 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
               Close
             </button>
