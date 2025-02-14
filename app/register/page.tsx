@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const client = new Client()
   .setEndpoint("https://cloud.appwrite.io/v1") // Replace with your Appwrite endpoint
-  .setProject("67a19ec80028558214f2"); 
+  .setProject("67ad93cc00138d79087a"); 
 
 const account = new Account(client);
 

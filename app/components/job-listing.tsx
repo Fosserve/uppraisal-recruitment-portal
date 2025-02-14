@@ -1,24 +1,31 @@
 "use client"
+
 import type React from "react"
 import { useState, useEffect } from "react"
 import JobApplicationStepper from "./stepper"
 import { motion, AnimatePresence } from "framer-motion"
 import { databases } from "../appwrite"
-
+import { Building2, Clock, MapPin, Briefcase, GraduationCap, Globe } from "lucide-react"
 
 interface Job {
   $id: string
-  title: string
+  designation: string
+  company: string
+  companyWebsite: string
+  companyLogo?: string
+  experience: string
+  location: string
+  employmentType: string
+  workMode: string
+  department: string
+  keySkills: string[]
   description: string
-  link: string
   categories: string[]
 }
 
 interface JobListingProps {
   category: string
 }
-
-
 
 const JobListing: React.FC<JobListingProps> = ({ category }) => {
   const [jobs, setJobs] = useState<Job[]>([])
@@ -29,9 +36,10 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await databases.listDocuments('67ad9a8000273614f1f6', '67ad9ace00383939ae95')
+        const response = await databases.listDocuments("67ad9a8000273614f1f6", "67ad9ace00383939ae95")
         const fetchedJobs = response.documents as unknown as Job[]
-        const filteredJobs = category === "All" ? fetchedJobs : fetchedJobs.filter((job) => job.categories.includes(category))
+        const filteredJobs =
+          category === "All" ? fetchedJobs : fetchedJobs.filter((job) => job.categories.includes(category))
         setJobs(filteredJobs)
       } catch (error) {
         console.error("Error fetching jobs:", error)
@@ -54,39 +62,58 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
   }
 
   return (
-    <div className="job-listing p-4 sm:p-6 max-w-7xl my-10 container mx-auto">
-      <h2 className="text-3xl font-bold mb-16 text-center text-gray-800">Job Listings in {category}</h2>
+    <div className="job-listing p-4 sm:p-6 max-w-7xl  my-10 mx-auto">
+      <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">
+        {category === "All" ? "All Job Listings" : `Jobs in ${category}`}
+      </h2>
+
       {jobs.length > 0 ? (
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="space-y-4 max-w-sm shadow-lg">
           {jobs.map((job) => (
-            <motion.li
+            <motion.div
               key={job.$id}
-              className="p-4 bg-gray-50 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 max-w-xl"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="bg-white rounded-lg shadow-lg p-4"
+              whileHover={{ y: -2, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" }}
+              transition={{ duration: 0.2 }}
             >
-              <h3 className="text-2xl font-semibold text-gray-900">{job.title}</h3>
-              <p className="text-gray-600 mt-2">{job.description}</p>
-              <div className="flex justify-start space-x-4 mt-4">
-                <button
-                  onClick={() => handleApply(job)}
-                  className="px-4 py-2 border text-white bg-indigo-600 shadow-md rounded-md hover:bg-indigo-500 transition-colors duration-300"
-                >
-                  Apply Now
-                </button>
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">{job.designation}</h3>
+                  <p className="text-gray-600">{job.company}</p>
+                </div>
+                <span className="text-sm font-semibold text-gray-500">exp: {job.experience}+ yrs</span>
+              </div>
+              <div className="mt-2">
+                <div className="flex flex-wrap gap-2">
+                  {job.keySkills.slice(0, 3).map((skill, index) => (
+                    <span key={index} className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs">
+                      {skill}
+                    </span>
+                  ))}
+                  {job.keySkills.length > 3 && (
+                    <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
+                      +{job.keySkills.length - 3} more
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="mt-4 flex justify-end">
                 <button
                   onClick={() => handleView(job)}
-                  className="px-4 py-2 border text-indigo-600 bg-white shadow-md rounded-md hover:bg-whitesmoke hover:text-indigo-500 transition-colors duration-300"
+                  className="text-indigo-700 hover:text-indigo-600 text-sm font-medium"
                 >
                   View Details
                 </button>
               </div>
-            </motion.li>
+            </motion.div>
           ))}
-        </ul>
+        </div>
       ) : (
-        <p className="text-center text-gray-500">No job listings available in this category.</p>
+        <div className="text-center py-8">
+          <p className="text-gray-600">No job listings available in this category.</p>
+        </div>
       )}
+
       <AnimatePresence>
         {showModal && selectedJob && (
           <motion.div
@@ -95,37 +122,109 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="fixed inset-0 bg-black opacity-50"></div>
+            <div className="fixed inset-0  bg-black/30 backdrop-blur-sm" onClick={() => setShowModal(false)} />
             <motion.div
-              className="bg-white p-6 rounded-lg shadow-lg w-[100%] z-10 max-w-3xl max-h-[90vh] overflow-y-auto"
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
+              className="bg-white rounded-lg shadow-lg w-[90%] max-w-2xl max-h-[90vh] overflow-y-auto relative z-10"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
             >
-              <div className="flex justify-between items-center">
-                <h3 className="text-xl text-gray-700 font-bold ">
-                  {modalContent === "apply" ? `Apply for ${selectedJob.title}` : "Job Details"}
-                </h3>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                >
-                  Close
-                </button>
-              </div>
               {modalContent === "apply" ? (
-                <JobApplicationStepper />
+                <div className="p-6">
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-bold text-gray-900">Apply for {selectedJob.designation}</h3>
+                    <button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-gray-700">
+                      <span className="sr-only">Close</span>
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <JobApplicationStepper />
+                </div>
               ) : (
-                <div className="space-y-4">
-                  <p className="text-lg text-gray-700"><strong>Title:</strong> {selectedJob.title}</p>
-                  <p className="text-lg text-gray-700"><strong>Description:</strong> {selectedJob.description}</p>
-                  <p className="text-lg text-gray-700"><strong>Categories:</strong> {selectedJob.categories.join(", ")}</p>
-                  <button
-                    onClick={() => handleApply(selectedJob)}
-                    className="px-4 py-2 border text-white bg-indigo-600 shadow-md rounded-md hover:bg-indigo-500 transition-colors duration-300"
-                  >
-                    Apply Now
-                  </button>
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-6">
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">{selectedJob.designation}</h3>
+                      <div className="flex items-center space-x-2 text-gray-600">
+                        <Building2 className="w-4 h-4" />
+                        <span>{selectedJob.company}</span>
+                        <span>•</span>
+                        <a
+                          href={selectedJob.companyWebsite}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800 flex items-center"
+                        >
+                          <Globe className="w-4 h-4 mr-1" />
+                          Website
+                        </a>
+                      </div>
+                    </div>
+                    <button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-gray-700">
+                      <span className="sr-only">Close</span>
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="space-y-2">
+                      <div className="flex items-center text-gray-600">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        <span>{selectedJob.location}</span>
+                      </div>
+                      <div className="flex items-center text-gray-600">
+                        <Briefcase className="w-4 h-4 mr-2" />
+                        <span>{selectedJob.employmentType}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center text-gray-600">
+                        <Clock className="w-4 h-4 mr-2" />
+                        <span>{selectedJob.experience}+ yrs</span>
+                      </div>
+                      <div className="flex items-center text-gray-600">
+                        <GraduationCap className="w-4 h-4 mr-2" />
+                        <span>{selectedJob.department}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">   
+                    <h4 className="text-lg text-gray-900 font-semibold mb-2">Required Skills</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedJob.keySkills.map((skill, index) => (
+                        <span key={index} className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h4 className="text-lg text-gray-900 font-semibold mb-2">Job Description</h4>
+                    <p className="text-gray-600 whitespace-pre-line">{selectedJob.description}</p>
+                  </div>
+
+                  <div className="flex justify-end space-x-4">
+                    <button
+                      onClick={() => setShowModal(false)}
+                      className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                    >
+                      Close
+                    </button>
+                    <button
+                      onClick={() => {
+                        setModalContent("apply")
+                      }}
+                      className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-600"
+                    >
+                      Apply Now
+                    </button>
+                  </div>
                 </div>
               )}
             </motion.div>
