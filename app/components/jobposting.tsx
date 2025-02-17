@@ -101,13 +101,10 @@ export default function PostJob() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">Post a New Job</h2>
-
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Company Information Section */}
             <div className="bg-gray-50 rounded-lg p-6 space-y-6">
               <h3 className="text-xl font-semibold text-gray-900">Company Information</h3>
 

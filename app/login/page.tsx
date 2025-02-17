@@ -19,17 +19,35 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string>("");
   const router = useRouter()
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const login = async (email: string, password: string) => {
     try {
       await account.createEmailPasswordSession(email, password);
+      
+      // Fetch user details after successful login
       const user = await account.get();
+      console.log("Logged in user:", user); // Debugging log
       setLoggedInUser(user);
-    } catch (error) {
-      setError("Login failed. Please check your credentials.");
+  
+      router.push("/dashboard"); // Redirect after login
+    } catch (error: any) {
+      console.error("Login Error:", error); // Log error for debugging
+      setError(error.message || "Login failed. Please check your credentials.");
     }
   };
 
+  const logoutAll = async () => {
+    try {
+      await account.deleteSessions(); // Ends all active sessions
+      setLoggedInUser(null);
+      router.push("/login"); // Redirect to login after logout
+    } catch (error: any) {
+      console.error("Logout Error:", error);
+      setError("Failed to logout from all devices. Please try again.");
+    }
+  };
   const register = async () => {
     try {
       await account.create(ID.unique(), email, password, name);
@@ -49,26 +67,61 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  if (loggedInUser) {
-    return (
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <p className="text-center text-lg font-bold">
-          Logged in as {loggedInUser.name}
-        </p>
-        <button
-          onClick={logout}
-          className="mt-4 w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-500"
-        >
-          Logout
-        </button>
+  // if (loggedInUser) {
+  //   return (
+  //     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+  //     <div className="flex justify-between items-center mb-3">
+  //       <p className="text-center text-lg text-gray-900/80 font-bold">
+  //         Logged in as <span className="text-indigo-700">{loggedInUser.name}</span>
+  //       </p>
+  //       <button
+  //         onClick={logout}
+  //         className="mt-4 rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-500"
+  //       >
+  //         Logout
+  //       </button>
+  //     </div>
 
-        <PostJob />
-      </div>
-    );
-  }
+  //     {/* Open Modal Button */}
+  //     <button
+  //       onClick={() => setIsModalOpen(true)}
+  //       className="mt-4 mb-4 w-fit rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-500"
+  //     >
+  //       Post a Job
+  //     </button>
+
+  //     {/* Modal Component */}
+  //     {isModalOpen && (
+  //       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+  //         <div className="bg-white rounded-lg max-h-[32rem] overflow-y-auto shadow-lg p-6 w-full max-w-3xl">
+  //           <div className="flex justify-between items-center mb-4">
+  //             <h2 className="text-lg text-gray-700 font-semibold">Post a Job</h2>
+  //             <button
+  //               onClick={() => setIsModalOpen(false)}
+  //               className="text-gray-500 hover:text-gray-700 text-lg"
+  //             >
+  //               ✖
+  //             </button>
+  //           </div>
+  //           {/* PostJob Component inside Modal */}
+  //           <PostJob />
+  //         </div>
+  //       </div>
+  //     )}
+  //   </div>
+
+  //   );
+  // }
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-white h-screen">
+      <button
+  onClick={logoutAll}
+  className="mt-4 rounded-md fixed top-0 bg-red-600 px-4 py-2 text-white hover:bg-red-500"
+>
+  Logout from All Devices
+</button>
+
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold text-gray-900">
           Sign in to your account

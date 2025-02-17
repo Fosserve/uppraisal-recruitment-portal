@@ -7,6 +7,7 @@ import HeroSection from './components/hero-section'
 
 import Timeline from './components/timeline'
 import JobListing from './components/job-listing'
+import TestimonialCarousel from './components/testimonial'
 
 const page = () => {
   const categories = ['All', 'Trending', 'Engineering', 'Marketing', 'Sales', 'Design'];
@@ -32,6 +33,7 @@ const page = () => {
       </div>
       <JobListing category={selectedCategory} />
       <Timeline />
+      <TestimonialCarousel />
     </div>
   )
 }
