@@ -3,7 +3,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { account, ID } from "../appwrite";
 import { useRouter } from "next/navigation"
-import PostJob from "../components/jobposting";
 
 
 
@@ -26,23 +25,22 @@ const LoginPage: React.FC = () => {
     try {
       await account.createEmailPasswordSession(email, password);
       
-      // Fetch user details after successful login
       const user = await account.get();
-      console.log("Logged in user:", user); // Debugging log
+      console.log("Logged in user:", user); 
       setLoggedInUser(user);
   
-      router.push("/dashboard"); // Redirect after login
+      router.push("/dashboard"); 
     } catch (error: any) {
-      console.error("Login Error:", error); // Log error for debugging
+      console.error("Login Error:", error);
       setError(error.message || "Login failed. Please check your credentials.");
     }
   };
 
   const logoutAll = async () => {
     try {
-      await account.deleteSessions(); // Ends all active sessions
+      await account.deleteSessions(); 
       setLoggedInUser(null);
-      router.push("/login"); // Redirect to login after logout
+      router.push("/login"); 
     } catch (error: any) {
       console.error("Logout Error:", error);
       setError("Failed to logout from all devices. Please try again.");
@@ -66,52 +64,6 @@ const LoginPage: React.FC = () => {
       setError("Logout failed. Please try again.");
     }
   };
-
-  // if (loggedInUser) {
-  //   return (
-  //     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-  //     <div className="flex justify-between items-center mb-3">
-  //       <p className="text-center text-lg text-gray-900/80 font-bold">
-  //         Logged in as <span className="text-indigo-700">{loggedInUser.name}</span>
-  //       </p>
-  //       <button
-  //         onClick={logout}
-  //         className="mt-4 rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-500"
-  //       >
-  //         Logout
-  //       </button>
-  //     </div>
-
-  //     {/* Open Modal Button */}
-  //     <button
-  //       onClick={() => setIsModalOpen(true)}
-  //       className="mt-4 mb-4 w-fit rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-500"
-  //     >
-  //       Post a Job
-  //     </button>
-
-  //     {/* Modal Component */}
-  //     {isModalOpen && (
-  //       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-  //         <div className="bg-white rounded-lg max-h-[32rem] overflow-y-auto shadow-lg p-6 w-full max-w-3xl">
-  //           <div className="flex justify-between items-center mb-4">
-  //             <h2 className="text-lg text-gray-700 font-semibold">Post a Job</h2>
-  //             <button
-  //               onClick={() => setIsModalOpen(false)}
-  //               className="text-gray-500 hover:text-gray-700 text-lg"
-  //             >
-  //               ✖
-  //             </button>
-  //           </div>
-  //           {/* PostJob Component inside Modal */}
-  //           <PostJob />
-  //         </div>
-  //       </div>
-  //     )}
-  //   </div>
-
-  //   );
-  // }
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-white h-screen">

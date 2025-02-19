@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { account } from "../appwrite"
 import PostJob from "../components/jobposting"
+import JobApplicationPage from "../components/submitted-data"
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<{ name: string } | null>(null)
@@ -77,6 +78,9 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+
+<JobApplicationPage />
+
 
       {/* Add more admin dashboard content here */}
     </div>

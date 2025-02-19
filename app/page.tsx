@@ -8,6 +8,7 @@ import HeroSection from './components/hero-section'
 import Timeline from './components/timeline'
 import JobListing from './components/job-listing'
 import TestimonialCarousel from './components/testimonial'
+import SubmittedData from './components/submitted-data'
 
 const page = () => {
   const categories = ['All', 'Trending', 'Engineering', 'Marketing', 'Sales', 'Design'];
