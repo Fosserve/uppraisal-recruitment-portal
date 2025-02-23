@@ -36,16 +36,7 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const logoutAll = async () => {
-    try {
-      await account.deleteSessions(); 
-      setLoggedInUser(null);
-      router.push("/login"); 
-    } catch (error: any) {
-      console.error("Logout Error:", error);
-      setError("Failed to logout from all devices. Please try again.");
-    }
-  };
+
   const register = async () => {
     try {
       await account.create(ID.unique(), email, password, name);
@@ -67,12 +58,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-white h-screen">
-      <button
-  onClick={logoutAll}
-  className="mt-4 rounded-md fixed top-0 bg-red-600 px-4 py-2 text-white hover:bg-red-500"
->
-  Logout from All Devices
-</button>
+    
 
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold text-gray-900">
@@ -85,7 +71,7 @@ const LoginPage: React.FC = () => {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm/6 font-semibold font-medium text-gray-900"
+              className="block text-sm/6  font-medium text-gray-900"
             >
               Email address
             </label>

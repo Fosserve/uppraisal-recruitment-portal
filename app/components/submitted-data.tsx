@@ -1,9 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { FiUser, FiBriefcase, FiCheckCircle } from "react-icons/fi";
-import { useDropzone } from "react-dropzone";
 import { databases } from "../appwrite";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Alert, Button } from '@mui/material';
 
 const DATABASE_ID = "67ad9a8000273614f1f6";
 const COLLECTION_ID = "67adb77a003aad67eb41";
@@ -22,7 +21,11 @@ type Application = {
   $id: string;
   name: string;
   email: string;
+  phone: string;
   position: string;
+  experience: string;
+  resume: string | null;
+  additionalInfo: string;
 };
 
 const JobApplicationPage: React.FC = () => {
@@ -45,7 +48,7 @@ const JobApplicationPage: React.FC = () => {
   const fetchApplications = async () => {
     try {
       const response = await databases.listDocuments(DATABASE_ID, COLLECTION_ID);
-      setApplications(response.documents as Application[]);
+      setApplications(response.documents as unknown as Application[]);
     } catch (error) {
       console.error("Error fetching applications:", error);
     }
@@ -67,26 +70,47 @@ const JobApplicationPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl w-full mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h3 className="text-xl font-bold mt-6 text-gray-700">Submitted Applications</h3>
-      <table className="w-full border-collapse mt-4">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border p-2 text-gray-700">Name</th>
-            <th className="border p-2 text-gray-700">Email</th>
-            <th className="border p-2 text-gray-700">Position</th>
-          </tr>
-        </thead>
-        <tbody>
-          {applications.map((app) => (
-            <tr key={app.$id} className="border">
-              <td className="p-2 text-gray-700">{app.name}</td>
-              <td className="p-2 text-gray-700">{app.email}</td>
-              <td className="p-2 text-gray-700">{app.position}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="container w-full mx-auto p-6">
+      <Typography variant="h4" component="h3" className="mt-6 text-gray-700">
+        Submitted Applications
+      </Typography>
+      {errors.message && <Alert severity="error">{errors.message}</Alert>}
+      <TableContainer component={Paper} variant="outlined" className="mt-4">
+        <Table>
+          <TableHead>
+            <TableRow style={{ backgroundColor: "#f0f0f0" }}>
+              <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
+              <TableCell style={{ fontWeight: "bold" }}>Email</TableCell>
+              <TableCell style={{ fontWeight: "bold" }}>Phone</TableCell>
+              <TableCell style={{ fontWeight: "bold" }}>Position</TableCell>
+              <TableCell style={{ fontWeight: "bold" }}>Experience</TableCell>
+              <TableCell style={{ fontWeight: "bold" }}>Resume</TableCell>
+              <TableCell style={{ fontWeight: "bold" }}>Additional Info</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {applications.map((app) => (
+              <TableRow key={app.$id}>
+                <TableCell>{app.name}</TableCell>
+                <TableCell>{app.email}</TableCell>
+                <TableCell>{app.phone}</TableCell>
+                <TableCell>{app.position}</TableCell>
+                <TableCell>{app.experience}</TableCell>
+                <TableCell>
+                  {app.resume ? (
+                    <Button href={app.resume} target="_blank" rel="noopener noreferrer">
+                      View Resume
+                    </Button>
+                  ) : (
+                    "No Resume"
+                  )}
+                </TableCell>
+                <TableCell>{app.additionalInfo}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

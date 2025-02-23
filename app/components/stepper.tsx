@@ -6,10 +6,9 @@ import type React from "react"
 import { useState } from "react"
 import { FiUser, FiBriefcase, FiCheckCircle } from "react-icons/fi"
 import { useDropzone } from "react-dropzone"
-import { databases } from "../appwrite"
+import { databases, ID, storage } from "../appwrite"
+import {  APPLICANT_COLLECTION_ID, DATABASE_ID, RESUME_STORAGE_ID  } from "../utils"
 
-const DATABASE_ID = "67ad9a8000273614f1f6"
-const COLLECTION_ID = "67adb77a003aad67eb41"
 
 type FormData = {
   name: string
@@ -94,31 +93,37 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
     maxFiles: 1,
   })
 
-  const handleSubmit = async () => {
-    if (validateStep(currentStep)) {
-      try {
+const handleSubmit = async () => {
+  if (validateStep(currentStep)) {
+    try {
+      const resumeFile = formData.resume;
+      if (resumeFile) {
+        const file = await storage.createFile(RESUME_STORAGE_ID, ID.unique(), resumeFile);
+        console.log(file)
+        const fileUrl = file.$id; // Assuming $id is the correct property to use for the file reference
         const dataToSubmit = {
           name: formData.name,
           email: formData.email,
           position: formData.position,
           phone: formData.phone,
           experience: formData.experience,
-          resume:formData.resume,
+          resume: fileUrl,
           additionalInfo: formData.additionalInfo,
-        }
+        };
 
-        await databases.createDocument(DATABASE_ID, COLLECTION_ID, "unique()", dataToSubmit)
+        await databases.createDocument(DATABASE_ID, APPLICANT_COLLECTION_ID, ID.unique(), dataToSubmit);
 
-        // Handle resume upload separately if needed
-        // You might want to use Appwrite's Storage API to upload the file
-
-        alert("Application submitted successfully!")
-      } catch (error) {
-        console.error("Error submitting application:", error)
-        alert("Failed to submit application. Please try again.")
+        alert("Application submitted successfully!");
+      } else {
+        console.error("No resume file selected.");
+        alert("Please select a resume file to submit.");
       }
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      alert("Failed to submit application. Please try again.");
     }
   }
+}
 
   const renderStep = () => {
     switch (currentStep) {

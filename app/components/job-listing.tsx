@@ -39,7 +39,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
         const response = await databases.listDocuments("67ad9a8000273614f1f6", "67ad9ace00383939ae95")
         const fetchedJobs = response.documents as unknown as Job[]
         const filteredJobs =
-          category === "All" ? fetchedJobs : fetchedJobs.filter((job) => job.categories.includes(category))
+          category === "All" ? fetchedJobs : fetchedJobs.filter((job) => job.categories && job.categories.includes(category))
         setJobs(filteredJobs)
       } catch (error) {
         console.error("Error fetching jobs:", error)
@@ -68,11 +68,11 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
       </h2>
 
       {jobs.length > 0 ? (
-        <div className="space-y-4 max-w-sm shadow-lg">
+        <div className="space-y-4 max-w-sm">
           {jobs.map((job) => (
             <motion.div
               key={job.$id}
-              className="bg-white rounded-lg shadow-lg p-4"
+              className="bg-gray-100 rounded-sm p-4 border"
               whileHover={{ y: -2, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" }}
               transition={{ duration: 0.2 }}
             >
@@ -140,7 +140,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
                       </svg>
                     </button>
                   </div>
-                  <JobApplicationStepper />
+                  <JobApplicationStepper jobTitle={selectedJob.designation} />
                 </div>
               ) : (
                 <div className="p-6">
