@@ -254,8 +254,8 @@ const handleSubmit = async () => {
   }
 
   return (
-    <div className="relative bg-white py-6 px-2">
-      <div className="max-w-2xl mx-auto bg-white rounded-xl p-6 md:p-8 relative z-10">
+    <div className="relative bg-white py-2 px-2">
+      <div className="max-w-2xl mx-auto bg-white rounded-xl p-3 md:p-4 relative z-10">
         <div>
           <div className="flex items-center justify-between mb-4">
             {[1, 2, 3].map((step) => (
