@@ -36,16 +36,7 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const logoutAll = async () => {
-    try {
-      await account.deleteSessions(); 
-      setLoggedInUser(null);
-      router.push("/login"); 
-    } catch (error: any) {
-      console.error("Logout Error:", error);
-      setError("Failed to logout from all devices. Please try again.");
-    }
-  };
+
   const register = async () => {
     try {
       await account.create(ID.unique(), email, password, name);
@@ -67,12 +58,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-white h-screen">
-      <button
-  onClick={logoutAll}
-  className="mt-4 rounded-md fixed top-0 bg-red-600 px-4 py-2 text-white hover:bg-red-500"
->
-  Logout from All Devices
-</button>
+    
 
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold text-gray-900">
@@ -85,7 +71,7 @@ const LoginPage: React.FC = () => {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm/6 font-semibold font-medium text-gray-900"
+              className="block text-sm/6  font-semibold text-gray-900"
             >
               Email address
             </label>
@@ -95,7 +81,7 @@ const LoginPage: React.FC = () => {
               type="email"
               required
               autoComplete="email"
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#065de8] sm:text-sm/6"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -111,7 +97,7 @@ const LoginPage: React.FC = () => {
               <div className="text-sm">
                 <Link
                   href="/forgot-password"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
+                  className="font-semibold text-[#065de8] hover:text-[#2498ff]"
                 >
                   Forgot password?
                 </Link>
@@ -123,7 +109,7 @@ const LoginPage: React.FC = () => {
               type="password"
               required
               autoComplete="current-password"
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#065de8] sm:text-sm/6"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -131,7 +117,7 @@ const LoginPage: React.FC = () => {
           <button
             type="button"
             onClick={() => login(email, password)}
-            className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-500"
+            className="w-full rounded-md bg-[#065de8] px-4 py-2 text-white hover:bg-[#2498ff]"
           >
             Sign in
           </button>

@@ -39,7 +39,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
         const response = await databases.listDocuments("67ad9a8000273614f1f6", "67ad9ace00383939ae95")
         const fetchedJobs = response.documents as unknown as Job[]
         const filteredJobs =
-          category === "All" ? fetchedJobs : fetchedJobs.filter((job) => job.categories.includes(category))
+          category === "All" ? fetchedJobs : fetchedJobs.filter((job) => job.categories && job.categories.includes(category))
         setJobs(filteredJobs)
       } catch (error) {
         console.error("Error fetching jobs:", error)
@@ -68,11 +68,11 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
       </h2>
 
       {jobs.length > 0 ? (
-        <div className="space-y-4 max-w-sm ">
+        <div className="space-y-4 flex justify-center flex-wrap items-center h-[100%] gap-6 w-[100%]">
           {jobs.map((job) => (
            <motion.div
            key={job.$id}
-           className="bg-white rounded-xl shadow-md p-6 transition-shadow duration-300"
+           className="bg-[#ebf2fc] rounded-xl shadow-md shadow-[#b7e3ff] p-6 transition-shadow duration-300 h-[100%] w-[100%] max-w-sm"
            whileHover={{ y: -3 }}
          >
            {/* Job Title & Company */}
@@ -92,7 +92,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
                {job.keySkills.slice(0, 3).map((skill, index) => (
                  <span
                    key={index}
-                   className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium"
+                   className="px-3 py-1 bg-[#d7eeff] text-[#065de8] rounded-full text-xs font-medium"
                  >
                    {skill}
                  </span>
@@ -109,7 +109,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
            <div className="mt-5 flex justify-end">
              <button
                onClick={() => handleView(job)}
-               className="text-white bg-indigo-600 hover:bg-indigo-500 transition-all duration-300 px-4 py-2 text-sm font-medium rounded-lg shadow-md"
+               className="text-white bg-[#065de8] hover:bg-[#0d78ff] transition-all duration-300 px-4 py-2 text-sm font-medium rounded-lg shadow-md"
              >
                View Details
              </button>
@@ -149,7 +149,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
                       </svg>
                     </button>
                   </div>
-                  <JobApplicationStepper jobTitle={""} />
+                  <JobApplicationStepper jobTitle={selectedJob.designation} />
                 </div>
               ) : (
                 <div className="p-6">
@@ -229,7 +229,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
                       onClick={() => {
                         setModalContent("apply")
                       }}
-                      className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-600"
+                      className="px-4 py-2 bg-[#065de8] text-white rounded-lg hover:bg-[#0d78ff]"
                     >
                       Apply Now
                     </button>

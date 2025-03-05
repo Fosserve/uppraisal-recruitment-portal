@@ -1,88 +1,124 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { account } from "../appwrite"
-import PostJob from "../components/jobposting"
-import JobApplicationPage from "../components/submitted-data"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { account } from "../appwrite";
+import PostJob from "../components/jobposting";
+import JobApplicationPage from "../components/submitted-data";
+import {
+  Box,
+  Button,
+  Typography,
+  Modal,
+  Container,
+  CircularProgress,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 
 export default function AdminDashboard() {
-  const [user, setUser] = useState<{ name: string } | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const router = useRouter()
+  const [user, setUser] = useState<{ name: string } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const currentUser = await account.get()
-        setUser(currentUser)
+        const currentUser = await account.get();
+        setUser(currentUser);
       } catch (error) {
-        console.error("Error fetching user:", error)
-        router.push("/login")
+        console.error("Error fetching user:", error);
+        router.push("/login");
       }
-    }
+    };
 
-    checkUser()
-  }, [router])
+    checkUser();
+  }, [router]);
 
   const logout = async () => {
     try {
-      await account.deleteSession("current")
-      router.push("/login")
+      await account.deleteSession("current");
+      router.push("/login");
     } catch (error) {
-      console.error("Logout failed:", error)
+      console.error("Logout failed:", error);
     }
-  }
+  };
 
   if (!user) {
-    return <div>Loading...</div>
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
-    <div className="flex min-h-screen flex-col justify-start px-6 py-12 lg:px-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-        <div>
-          <p className="text-gray-600 mr-4 inline-block">
-            Welcome, <span className="font-semibold">{user.name}</span>
-          </p>
-          <button
-            onClick={logout}
-            className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-500"
-          >
-            Logout
-          </button>
-        </div>
-      </div>
-
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="mt-4 mb-4 w-fit rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-500"
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Box
+        display="flex"
+        flexDirection={{ xs: "column", sm: "row" }}
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
       >
-        Post a Job
-      </button>
+        <Typography variant="h4" component="h1" color="textPrimary" mb={{ xs: 2, sm: 0 }}>
+          Admin Dashboard
+        </Typography>
+        <Box display="flex" flexDirection={{ xs: "column", sm: "row" }} alignItems="center">
+          <Typography variant="body1" color="textSecondary" component="span" mr={{ xs: 0, sm: 2 }} mb={{ xs: 1, sm: 0 }}>
+            Welcome, <strong>{user.name}</strong>
+          </Typography>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => setIsModalOpen(true)}
+            sx={{ mr: { xs: 0, sm: 2 }, mb: { xs: 1, sm: 0 } }}
+          >
+            Post a Job
+          </Button>
+          <Button variant="contained" color="error" onClick={logout}>
+            Logout
+          </Button>
+        </Box>
+      </Box>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg max-h-[32rem] overflow-y-auto shadow-lg p-6 w-full max-w-3xl">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg text-gray-700 font-semibold">Post a Job</h2>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 text-lg"
-              >
-                ✖
-              </button>
-            </div>
-            <PostJob />
-          </div>
-        </div>
-      )}
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        aria-labelledby="post-job-modal"
+        aria-describedby="modal-to-post-a-job"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            height: '100%',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 1,
+            overflowY: 'auto',
+          }}
+        >
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <Typography id="post-job-modal" variant="h6" component="h2">
+              Post a Job
+            </Typography>
+            <Button onClick={() => setIsModalOpen(false)} color="inherit">
+              ✖
+            </Button>
+          </Box>
+          <PostJob />
+        </Box>
+      </Modal>
 
-<JobApplicationPage />
-
-
-      {/* Add more admin dashboard content here */}
-    </div>
-  )
+      <JobApplicationPage />
+    </Container>
+  );
 }

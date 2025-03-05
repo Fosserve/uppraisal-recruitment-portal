@@ -15,7 +15,9 @@ const page = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   return (
-    <div className='bg-white h-screen'>
+    <div className='bg-[#f9fafc]'>
+              <Header />
+
       {/* <Header /> */}
       {/* <HeroSection /> */}
       <div className="tabs-container my-6">
@@ -23,7 +25,7 @@ const page = () => {
           {categories.map((category) => (
             <li key={category} className="mb-2 sm:mb-0">
               <button
-                className={`px-3 py-2 sm:px-4 sm:py-2 rounded-md ${selectedCategory === category ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+                className={`px-3 py-2 sm:px-4 sm:py-2 rounded-md ${selectedCategory === category ? 'bg-[#065de8] text-white' : 'bg-gray-200 text-gray-800'}`}
                 onClick={() => setSelectedCategory(category)}
               >
                 {category}

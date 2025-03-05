@@ -6,10 +6,9 @@ import type React from "react"
 import { useState } from "react"
 import { FiUser, FiBriefcase, FiCheckCircle } from "react-icons/fi"
 import { useDropzone } from "react-dropzone"
-import { databases } from "../appwrite"
+import { databases, ID, storage } from "../appwrite"
+import {  APPLICANT_COLLECTION_ID, DATABASE_ID, RESUME_STORAGE_ID  } from "../utils"
 
-const DATABASE_ID = "67ad9a8000273614f1f6"
-const COLLECTION_ID = "67adb77a003aad67eb41"
 
 type FormData = {
   name: string
@@ -94,31 +93,37 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
     maxFiles: 1,
   })
 
-  const handleSubmit = async () => {
-    if (validateStep(currentStep)) {
-      try {
+const handleSubmit = async () => {
+  if (validateStep(currentStep)) {
+    try {
+      const resumeFile = formData.resume;
+      if (resumeFile) {
+        const file = await storage.createFile(RESUME_STORAGE_ID, ID.unique(), resumeFile);
+        console.log(file)
+        const fileUrl = file.$id; // Assuming $id is the correct property to use for the file reference
         const dataToSubmit = {
           name: formData.name,
           email: formData.email,
           position: formData.position,
           phone: formData.phone,
           experience: formData.experience,
-          resume:formData.resume,
+          resume: fileUrl,
           additionalInfo: formData.additionalInfo,
-        }
+        };
 
-        await databases.createDocument(DATABASE_ID, COLLECTION_ID, "unique()", dataToSubmit)
+        await databases.createDocument(DATABASE_ID, APPLICANT_COLLECTION_ID, ID.unique(), dataToSubmit);
 
-        // Handle resume upload separately if needed
-        // You might want to use Appwrite's Storage API to upload the file
-
-        alert("Application submitted successfully!")
-      } catch (error) {
-        console.error("Error submitting application:", error)
-        alert("Failed to submit application. Please try again.")
+        alert("Application submitted successfully!");
+      } else {
+        console.error("No resume file selected.");
+        alert("Please select a resume file to submit.");
       }
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      alert("Failed to submit application. Please try again.");
     }
   }
+}
 
   const renderStep = () => {
     switch (currentStep) {
@@ -131,7 +136,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
               id="name"
                 type="text"
                 placeholder="Full Name"
-                className={`block w-full rounded-md border ${errors.name ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm`}
+                className={`block w-full rounded-md border ${errors.name ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm`}
                 value={formData.name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 required
@@ -142,7 +147,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
               id="email"
                 type="email"
                 placeholder="Email Address"
-                className={`block w-full rounded-md border ${errors.email ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm`}
+                className={`block w-full rounded-md border ${errors.email ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm`}
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 required
@@ -153,7 +158,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
               id="phone"
                 type="tel"
                 placeholder="Phone Number"
-                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm"
                 value={formData.phone}
                 onChange={(e) => handleInputChange("phone", e.target.value)}
               />
@@ -162,7 +167,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
                 id='jobposition'
                 type="text"
                 placeholder="Apply Position"
-                className={`block w-full rounded-md border ${errors.position ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm`}
+                className={`block w-full rounded-md border ${errors.position ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm`}
                 value={formData.position}
                 onChange={(e) => handleInputChange("position", e.target.value)}
                 required
@@ -180,7 +185,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
               id="experience"
                 type="text"
                 placeholder="Years of Experience"
-                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm"
                 value={formData.experience}
                 onChange={(e) => handleInputChange("experience", e.target.value)}
               />
@@ -190,12 +195,12 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
                 <div
                   {...getRootProps()}
                   className={`w-full p-4 border-2 text-gray-600 border-dashed rounded-lg ${
-                    isDragActive ? "border-indigo-600" : errors.resume ? "border-red-500" : "border-gray-300"
+                    isDragActive ? "border-[#0d78ff]" : errors.resume ? "border-red-500" : "border-gray-300"
                   }`}
                 >
                   <input {...getInputProps()} />
                   {isDragActive ? (
-                    <p className="text-indigo-600">Drop the file here ...</p>
+                    <p className="text-[#0d78ff]">Drop the file here ...</p>
                   ) : formData.resume ? (
                     <p>{formData.resume.name}</p>
                   ) : (
@@ -208,7 +213,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
               <textarea
               id="additionalInfo"
                 placeholder="message to us"
-                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm"
                 value={formData.additionalInfo}
                 onChange={(e) => handleInputChange("additionalInfo", e.target.value)}
                 rows={4}
@@ -258,9 +263,9 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center ${
                     currentStep === step
-                      ? "bg-indigo-400 text-white"
+                      ? "bg-[#4db9ff] text-white"
                       : currentStep > step
-                        ? "bg-indigo-600 text-white"
+                        ? "bg-[#0d78ff] text-white"
                         : "bg-gray-200 text-gray-600"
                   }`}
                 >
@@ -291,7 +296,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
           {currentStep < 3 && (
             <button
               onClick={handleNext}
-              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors ml-auto"
+              className="px-6 py-2 bg-[#0d78ff] text-white rounded-lg hover:bg-[#2498ff] transition-colors ml-auto"
             >
               Next
             </button>
