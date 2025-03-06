@@ -71,7 +71,7 @@ const LoginPage: React.FC = () => {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm/6  font-medium text-gray-900"
+              className="block text-sm/6  font-semibold text-gray-900"
             >
               Email address
             </label>
@@ -81,7 +81,7 @@ const LoginPage: React.FC = () => {
               type="email"
               required
               autoComplete="email"
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#065de8] sm:text-sm/6"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -97,7 +97,7 @@ const LoginPage: React.FC = () => {
               <div className="text-sm">
                 <Link
                   href="/forgot-password"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
+                  className="font-semibold text-[#065de8] hover:text-[#2498ff]"
                 >
                   Forgot password?
                 </Link>
@@ -109,7 +109,7 @@ const LoginPage: React.FC = () => {
               type="password"
               required
               autoComplete="current-password"
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#065de8] sm:text-sm/6"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -117,7 +117,7 @@ const LoginPage: React.FC = () => {
           <button
             type="button"
             onClick={() => login(email, password)}
-            className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-500"
+            className="w-full rounded-md bg-[#065de8] px-4 py-2 text-white hover:bg-[#2498ff]"
           >
             Sign in
           </button>

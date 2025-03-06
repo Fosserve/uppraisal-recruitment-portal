@@ -56,7 +56,7 @@ const RegisterForm: React.FC = () => {
           name="email" 
           value={formData.email} 
           onChange={handleChange} 
-          className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" 
+          className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#065de8] sm:text-sm/6" 
           required 
         />
       </div>
@@ -68,7 +68,7 @@ const RegisterForm: React.FC = () => {
           name="username" 
           value={formData.username} 
           onChange={handleChange} 
-          className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" 
+          className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#065de8] sm:text-sm/6" 
           required 
         />
       </div>
@@ -80,18 +80,18 @@ const RegisterForm: React.FC = () => {
           name="password" 
           value={formData.password} 
           onChange={handleChange} 
-          className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" 
+          className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-[#065de8] sm:text-sm/6" 
           required 
         />
       </div>
       <button 
         type="submit" 
-        className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-500" 
+        className="w-full rounded-md bg-[#065de8] px-4 py-2 text-white hover:bg-[#2498ff]" 
         disabled={loading}
       >
         {loading ? "Registering..." : "Register"}
       </button>
-      <p className="text-sm text-gray-600">Already have an account? <span className="text-indigo-600 font-semibold">{" "}<Link href="/login">Sign in</Link></span></p>
+      <p className="text-sm text-gray-600">Already have an account? <span className="text-[#065de8] font-semibold">{" "}<Link href="/login">Sign in</Link></span></p>
     </form>
     </div>
     </div>

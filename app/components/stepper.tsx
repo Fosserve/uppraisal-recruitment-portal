@@ -136,7 +136,7 @@ const handleSubmit = async () => {
               id="name"
                 type="text"
                 placeholder="Full Name"
-                className={`block w-full rounded-md border ${errors.name ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm`}
+                className={`block w-full rounded-md border ${errors.name ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm`}
                 value={formData.name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 required
@@ -147,7 +147,7 @@ const handleSubmit = async () => {
               id="email"
                 type="email"
                 placeholder="Email Address"
-                className={`block w-full rounded-md border ${errors.email ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm`}
+                className={`block w-full rounded-md border ${errors.email ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm`}
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 required
@@ -158,7 +158,7 @@ const handleSubmit = async () => {
               id="phone"
                 type="tel"
                 placeholder="Phone Number"
-                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm"
                 value={formData.phone}
                 onChange={(e) => handleInputChange("phone", e.target.value)}
               />
@@ -167,7 +167,7 @@ const handleSubmit = async () => {
                 id='jobposition'
                 type="text"
                 placeholder="Apply Position"
-                className={`block w-full rounded-md border ${errors.position ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm`}
+                className={`block w-full rounded-md border ${errors.position ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm`}
                 value={formData.position}
                 onChange={(e) => handleInputChange("position", e.target.value)}
                 required
@@ -185,7 +185,7 @@ const handleSubmit = async () => {
               id="experience"
                 type="text"
                 placeholder="Years of Experience"
-                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm"
                 value={formData.experience}
                 onChange={(e) => handleInputChange("experience", e.target.value)}
               />
@@ -195,12 +195,12 @@ const handleSubmit = async () => {
                 <div
                   {...getRootProps()}
                   className={`w-full p-4 border-2 text-gray-600 border-dashed rounded-lg ${
-                    isDragActive ? "border-indigo-600" : errors.resume ? "border-red-500" : "border-gray-300"
+                    isDragActive ? "border-[#0d78ff]" : errors.resume ? "border-red-500" : "border-gray-300"
                   }`}
                 >
                   <input {...getInputProps()} />
                   {isDragActive ? (
-                    <p className="text-indigo-600">Drop the file here ...</p>
+                    <p className="text-[#0d78ff]">Drop the file here ...</p>
                   ) : formData.resume ? (
                     <p>{formData.resume.name}</p>
                   ) : (
@@ -213,7 +213,7 @@ const handleSubmit = async () => {
               <textarea
               id="additionalInfo"
                 placeholder="message to us"
-                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm"
                 value={formData.additionalInfo}
                 onChange={(e) => handleInputChange("additionalInfo", e.target.value)}
                 rows={4}
@@ -263,9 +263,9 @@ const handleSubmit = async () => {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center ${
                     currentStep === step
-                      ? "bg-indigo-400 text-white"
+                      ? "bg-[#4db9ff] text-white"
                       : currentStep > step
-                        ? "bg-indigo-600 text-white"
+                        ? "bg-[#0d78ff] text-white"
                         : "bg-gray-200 text-gray-600"
                   }`}
                 >
@@ -296,7 +296,7 @@ const handleSubmit = async () => {
           {currentStep < 3 && (
             <button
               onClick={handleNext}
-              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors ml-auto"
+              className="px-6 py-2 bg-[#0d78ff] text-white rounded-lg hover:bg-[#2498ff] transition-colors ml-auto"
             >
               Next
             </button>

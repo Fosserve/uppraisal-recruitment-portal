@@ -125,7 +125,7 @@ export default function PostJob() {
                     value={jobData.company}
                     onChange={handleChange}
                     required
-                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-[#2498ff] focus:border-[#2498ff] sm:text-sm"
                   />
                 </div>
 
@@ -141,7 +141,7 @@ export default function PostJob() {
                     onChange={handleChange}
                     required
                     placeholder="https://example.com"
-                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-[#2498ff] focus:border-[#2498ff] sm:text-sm"
                   />
                 </div>
               </div>
@@ -185,7 +185,7 @@ export default function PostJob() {
                     value={jobData.designation}
                     onChange={handleChange}
                     required
-                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-[#2498ff] focus:border-[#2498ff] sm:text-sm"
                   />
                 </div>
 
@@ -201,7 +201,7 @@ export default function PostJob() {
                     onChange={handleChange}
                     required
                     placeholder="e.g. Engineering, Marketing, Sales"
-                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-[#2498ff] focus:border-[#2498ff] sm:text-sm"
                   />
                 </div>
 
@@ -215,7 +215,7 @@ export default function PostJob() {
                     value={jobData.employmentType}
                     onChange={handleChange}
                     required
-                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-[#2498ff] focus:border-[#2498ff] sm:text-sm"
                   >
                     {EMPLOYMENT_TYPES.map((type) => (
                       <option key={type} value={type}>
@@ -235,7 +235,7 @@ export default function PostJob() {
                     value={jobData.workMode}
                     onChange={handleChange}
                     required
-                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-[#2498ff] focus:border-[#2498ff] sm:text-sm"
                   >
                     {WORK_MODES.map((mode) => (
                       <option key={mode} value={mode}>
@@ -257,7 +257,7 @@ export default function PostJob() {
                     onChange={handleChange}
                     required
                     placeholder="e.g. 2-4 years"
-                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-[#2498ff] focus:border-[#2498ff] sm:text-sm"
                   />
                 </div>
 
@@ -272,7 +272,7 @@ export default function PostJob() {
                     value={jobData.location}
                     onChange={handleChange}
                     required
-                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-[#2498ff] focus:border-[#2498ff] sm:text-sm"
                   />
                 </div>
               </div>
@@ -289,7 +289,7 @@ export default function PostJob() {
                     onChange={(e) => setSkillInput(e.target.value)}
                     onKeyDown={handleSkillInput}
                     placeholder="Type a skill and press Enter"
-                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-[#2498ff] focus:border-[#2498ff] sm:text-sm"
                   />
                   <div className="flex flex-wrap gap-2">
                     {jobData.keySkills.map((skill) => (
@@ -322,7 +322,7 @@ export default function PostJob() {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-[#2498ff] focus:border-[#2498ff] sm:text-sm"
                   placeholder="Describe the role, responsibilities, requirements, and any other relevant details..."
                 ></textarea>
               </div>
@@ -331,7 +331,7 @@ export default function PostJob() {
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-[#0d78ff] hover:bg-[#065de8] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
               >
                 Post Job
               </button>

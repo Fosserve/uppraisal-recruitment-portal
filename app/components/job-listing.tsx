@@ -68,44 +68,53 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
       </h2>
 
       {jobs.length > 0 ? (
-        <div className="space-y-4 max-w-sm">
+        <div className="space-y-4 flex justify-center flex-wrap items-center h-[100%] gap-6 w-[100%]">
           {jobs.map((job) => (
-            <motion.div
-              key={job.$id}
-              className="bg-gray-100 rounded-sm p-4 border"
-              whileHover={{ y: -2, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{job.designation}</h3>
-                  <p className="text-gray-600">{job.company}</p>
-                </div>
-                <span className="text-sm font-semibold text-gray-500">exp: {job.experience}+ yrs</span>
-              </div>
-              <div className="mt-2">
-                <div className="flex flex-wrap gap-2">
-                  {job.keySkills.slice(0, 3).map((skill, index) => (
-                    <span key={index} className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs">
-                      {skill}
-                    </span>
-                  ))}
-                  {job.keySkills.length > 3 && (
-                    <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
-                      +{job.keySkills.length - 3} more
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="mt-4 flex justify-end">
-                <button
-                  onClick={() => handleView(job)}
-                  className="text-indigo-700 hover:text-indigo-600 text-sm font-medium"
-                >
-                  View Details
-                </button>
-              </div>
-            </motion.div>
+           <motion.div
+           key={job.$id}
+           className="bg-[#ebf2fc] rounded-xl shadow-md shadow-[#b7e3ff] p-6 transition-shadow duration-300 h-[100%] w-[100%] max-w-sm"
+           whileHover={{ y: -3 }}
+         >
+           {/* Job Title & Company */}
+           <div className="flex justify-between items-center">
+             <div>
+               <h3 className="text-xl font-semibold text-gray-900">{job.designation}</h3>
+               <p className="text-gray-500 text-sm">{job.company}</p>
+             </div>
+             <span className="text-sm font-medium bg-gray-100 text-gray-700 px-3 py-1 rounded-lg">
+               {job.experience}+ yrs exp
+             </span>
+           </div>
+     
+           {/* Key Skills */}
+           <div className="mt-3">
+             <div className="flex flex-wrap gap-2">
+               {job.keySkills.slice(0, 3).map((skill, index) => (
+                 <span
+                   key={index}
+                   className="px-3 py-1 bg-[#d7eeff] text-[#065de8] rounded-full text-xs font-medium"
+                 >
+                   {skill}
+                 </span>
+               ))}
+               {job.keySkills.length > 3 && (
+                 <span className="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-xs font-medium">
+                   +{job.keySkills.length - 3} more
+                 </span>
+               )}
+             </div>
+           </div>
+     
+           {/* View Details Button */}
+           <div className="mt-5 flex justify-end">
+             <button
+               onClick={() => handleView(job)}
+               className="text-white bg-[#065de8] hover:bg-[#0d78ff] transition-all duration-300 px-4 py-2 text-sm font-medium rounded-lg shadow-md"
+             >
+               View Details
+             </button>
+           </div>
+         </motion.div>
           ))}
         </div>
       ) : (
@@ -220,7 +229,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
                       onClick={() => {
                         setModalContent("apply")
                       }}
-                      className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-600"
+                      className="px-4 py-2 bg-[#065de8] text-white rounded-lg hover:bg-[#0d78ff]"
                     >
                       Apply Now
                     </button>

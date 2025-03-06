@@ -58,7 +58,7 @@ const TestimonialCarousel = () => {
   }
 
   return (
-    <section className="py-12 md:py-24 mx-auto">
+    <section className="py-12 bg-[#f9fafc] md:py-24 mx-auto">
       <div className="w-full mx-auto max-w-2xl">
         <AnimatePresence mode="popLayout">
           <motion.div
