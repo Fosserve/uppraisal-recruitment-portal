@@ -4,22 +4,47 @@ import LoginPage from './login/page'
 import RegisterForm from './register/page'
 import Header from './components/header'
 import HeroSection from './components/hero-section'
-
 import Timeline from './components/timeline'
 import JobListing from './components/job-listing'
 import TestimonialCarousel from './components/testimonial'
 import SubmittedData from './components/submitted-data'
+import { databases } from './appwrite'
+
+interface Job {
+  $id: string;
+  department: string;
+}
 
 const page = () => {
-  const categories = ['All', 'Trending', 'Engineering', 'Marketing', 'Sales', 'Design'];
+  const [categories, setCategories] = useState<string[]>(['All']);
   const [selectedCategory, setSelectedCategory] = useState('All');
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await databases.listDocuments("67ad9a8000273614f1f6", "67ad9ace00383939ae95");
+        const jobs = response.documents as unknown as Job[];
+        
+        // Extract unique departments from all jobs
+        const allDepartments = new Set<string>();
+        jobs.forEach(job => {
+          if (job.department) {
+            allDepartments.add(job.department);
+          }
+        });
+console.log(allDepartments)
+        setCategories(['All', ...Array.from(allDepartments)]);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <div className='bg-[#f9fafc]'>
-              <Header />
-
-      {/* <Header /> */}
-      {/* <HeroSection /> */}
+      <Header />
       <div className="tabs-container my-6">
         <ul className="flex flex-wrap justify-center space-x-2 sm:space-x-4">
           {categories.map((category) => (

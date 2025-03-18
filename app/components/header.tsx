@@ -11,17 +11,17 @@ export default function Example() {
   return (
     <header>
       <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
-        <div className="flex lg:flex-1">
+        <div className="flex justify-center w-full">
           <a href="#" className="-m-1.5 p-1.5">
             <span className="sr-only">Uppraisal Consultnat</span>
             <img
               alt="Uppraisal Consultnat"
               src={logo.src}
-              className="h-8 w-auto"
+              className="lg:w-50 lg:h-50"
             />
           </a>
         </div>
-        <div className="flex lg:hidden">
+        {/* <div className="flex lg:hidden">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
@@ -35,7 +35,7 @@ export default function Example() {
           <a href="/login" className="text-sm/6 font-semibold text-gray-900">
             Log in <span aria-hidden="true">&rarr;</span>
           </a>
-        </div>
+        </div> */}
       </nav>
       <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
         <div className="fixed inset-0 z-10" />
@@ -58,7 +58,7 @@ export default function Example() {
               <XMarkIcon aria-hidden="true" className="size-6" />
             </button>
           </div>
-          <div className="mt-6 flow-root">
+          {/* <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="py-6">
                 <a
@@ -69,7 +69,7 @@ export default function Example() {
                 </a>
               </div>
             </div>
-          </div>
+          </div> */}
         </DialogPanel>
       </Dialog>
     </header>

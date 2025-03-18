@@ -1,5 +1,6 @@
 import Image from "next/image";
 import logo from "../../public/uppraisal-logo.png";
+import { Linkedin } from 'lucide-react';
 import {
   EnvelopeIcon,
   PhoneIcon,
@@ -20,14 +21,14 @@ interface SocialItem extends NavigationItem {
 const navigation = {
   main: [
     { name: "Home", href: "/" },
-    { name: "About Us", href: "/aboutus" },
+    { name: "About Us", href: "/about-us" },
     { name: "Career", href: "/career" },
     { name: "Our Services", href: "/services" },
   ] as NavigationItem[],
   social: [
     {
       name: "Facebook",
-      href: "#",
+      href: "https://www.facebook.com/share/15xCz98Lb6/",
       icon: (props: React.SVGProps<SVGSVGElement>) => (
         <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
           <path
@@ -40,7 +41,7 @@ const navigation = {
     },
     {
       name: "Instagram",
-      href: "#",
+      href: "https://www.facebook.com/share/15xCz98Lb6/",
       icon: (props: React.SVGProps<SVGSVGElement>) => (
         <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
           <path
@@ -56,7 +57,7 @@ const navigation = {
 
 export default function FooterSection() {
   return (
-    <footer className="bg-gray-900">
+    <footer id="footer" className="bg-gray-900">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="space-y-6">
@@ -113,24 +114,24 @@ export default function FooterSection() {
             <h3 className="text-sm/6 font-semibold text-white mb-3">Contact Us</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="tel:+918420623902" className="text-sm/6 flex text-gray-400 hover:text-white">
+                <a href="https://www.linkedin.com/in/sukanya-guha-das-17572034a/" className="text-sm/6 flex text-gray-400 hover:text-white">
                   <PhoneIcon className="h-5 w-5 mr-2" />
-                  <span>Sukanya Guha Das - 8420623902</span>
+                  <span className="flex gap-4" >Sukanya Guha Das -  <Linkedin className="h-5 w-5 mr-2"/></span>
                 </a>
               </li>
               <li>
-                <a href="tel:+918017003737" className="text-sm/6 flex text-gray-400 hover:text-white">
+                <a href="https://www.linkedin.com/in/jolly-chakraborty-77539b165/" className="text-sm/6 flex text-gray-400 hover:text-white">
                   <PhoneIcon className="h-5 w-5 mr-2" />
-                  <span>Jolly Chakraborty - 8017003737</span>
+                  <span className="flex gap-4 ">Jolly Chakraborty - <Linkedin className="h-5 w-5 mr-2"/> </span>
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:uppraisalconsultant@gmail.com"
+                  href="mailto:hr@uppraisalconsultant.com"
                   className="text-sm/6 text-gray-400 flex hover:text-white"
                 >
                   <EnvelopeIcon className="h-5 w-5 mr-2" />
-                  <span>uppraisalconsultant@gmail.com</span>
+                  <span>hr@uppraisalconsultant.com</span>
                 </a>
               </li>
               <li>
@@ -152,6 +153,12 @@ export default function FooterSection() {
           <p className="text-sm text-center text-gray-400">
             &copy; {new Date().getFullYear()} Uppraisal Consultant. All rights reserved.
           </p>
+        </div>
+        <div className="flex gap-1 sm:justify-end mt-3 sm:mt-2 justify-center"> 
+          <p className="text-sm text-center text-gray-400">Website developed by</p>
+        <a href="https://portfolio-website-ochre-gamma-18.vercel.app/" className="text-sm/6 flex text-gray-400 hover:text-white">
+                  <span className="text-[#045be6] text-md font-semibold">Hameedullah Shaik and Praveen Gunja</span>
+        </a>
         </div>
       </div>
     </footer>

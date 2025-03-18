@@ -57,33 +57,30 @@ const JobApplicationPage: React.FC = () => {
     }
   };
 
-
-
-
-
   const handleViewDetails = (application: Application) => {
     setSelectedApplication(application);
-    setOriginalData(application); // Store original data for comparison
-    const formDataWithoutDollarFields = Object.keys(application).reduce((acc, key) => {
-      if (!key.startsWith("$")) {
-        acc[key as keyof Application] = application[key as keyof Application] ?? '';
-      }
-      return acc;
-    }, {} as Application); // Use Application to ensure all fields are present
-    setFormData(formDataWithoutDollarFields as Application);
+    setOriginalData(application);
+    setFormData(application as Application);
     setIsEditing(false);
     setIsModalOpen(true);
   };
+
   const handleUpdate = async () => {
-    if (!formData || !originalData) return;
+    if (!formData || !originalData || !formData.$id) {
+      alert("Missing required document ID");
+      return;
+    }
   
-    // Find only the modified fields
-    const updatedFields: Partial<Application> = Object.keys(formData).reduce((acc, key) => {
+    // Define only the fields that are editable
+    const editableFields = ['name', 'email', 'phone', 'position', 'experience', 'additionalInfo', 'status'];
+    
+    // Create updatedFields object only with editable fields that have changed
+    const updatedFields: Partial<Application> = {};
+    editableFields.forEach((key) => {
       if ((formData as any)[key] !== (originalData as any)[key]) {
-        acc[key as keyof Application] = (formData as any)[key];
+        updatedFields[key as keyof Application] = (formData as any)[key];
       }
-      return acc;
-    }, {} as Partial<Application>);
+    });
   
     if (Object.keys(updatedFields).length === 0) {
       alert("No changes made.");
@@ -91,7 +88,12 @@ const JobApplicationPage: React.FC = () => {
     }
   
     try {
-      await databases.updateDocument(DATABASE_ID, APPLICANT_COLLECTION_ID, formData.$id, updatedFields);
+      await databases.updateDocument(
+        DATABASE_ID, 
+        APPLICANT_COLLECTION_ID, 
+        formData.$id,
+        updatedFields
+      );
       setApplications((prev) =>
         prev.map((app) => (app.$id === formData.$id ? { ...app, ...updatedFields } : app))
       );
@@ -101,13 +103,10 @@ const JobApplicationPage: React.FC = () => {
       alert("Failed to update application.");
     }
   };
-  
 
   const handleEdit = () => {
     setIsEditing(true);
   };
-
- 
 
   const statusColors: Record<ApplicationStatus, "default" | "primary" | "secondary" | "error" | "success" | "warning"> = {
     [ApplicationStatus.Pending]: "warning",
@@ -138,7 +137,6 @@ const JobApplicationPage: React.FC = () => {
           "No Resume"
         ),
     },
-    
     {
       field: "status",
       headerName: "Status",
@@ -172,7 +170,6 @@ const JobApplicationPage: React.FC = () => {
         </div>
       ),
     },
-    
   ];
 
   return (
@@ -199,45 +196,41 @@ const JobApplicationPage: React.FC = () => {
       </Typography>
     )}
 
-      {/* View and Update Modal */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} fullWidth>
         <DialogTitle>{isEditing ? "Edit Application" : "Application Details"}</DialogTitle>
         <DialogContent>
-  {formData && (
-    <>
-      {Object.keys(formData).map((key) => {
-        if (key === "$id") return null;
-
-        return key === "status" && isEditing ? (
-          <Select
-            key={key}
-            value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e.target.value as ApplicationStatus })}
-            fullWidth
-            margin="dense"
-          >
-            {Object.values(ApplicationStatus).map((status) => (
-              <MenuItem key={status} value={status}>
-                <Chip label={status} color={statusColors[status]} />
-              </MenuItem>
-            ))}
-          </Select>
-        ) : (
-          <TextField
-            key={key}
-            label={key}
-            value={(formData as any)[key] || ""}
-            onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-            fullWidth
-            margin="dense"
-            disabled={!isEditing}
-          />
-        );
-      })}
-    </>
-  )}
-</DialogContent>
-
+          {formData && (
+            <>
+              {['name', 'email', 'phone', 'position', 'experience', 'additionalInfo', 'status'].map((key) => (
+                key === "status" && isEditing ? (
+                  <Select
+                    key={key}
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value as ApplicationStatus })}
+                    fullWidth
+                    margin="dense"
+                  >
+                    {Object.values(ApplicationStatus).map((status) => (
+                      <MenuItem key={status} value={status}>
+                        <Chip label={status} color={statusColors[status]} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                ) : (
+                  <TextField
+                    key={key}
+                    label={key}
+                    value={(formData as any)[key] || ""}
+                    onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
+                    fullWidth
+                    margin="dense"
+                    disabled={!isEditing}
+                  />
+                )
+              ))}
+            </>
+          )}
+        </DialogContent>
         <DialogActions>
           {!isEditing ? (
             <Button onClick={handleEdit} color="primary">Edit</Button>

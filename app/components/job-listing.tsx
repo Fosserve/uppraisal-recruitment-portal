@@ -20,7 +20,6 @@ interface Job {
   department: string
   keySkills: string[]
   description: string
-  categories: string[]
 }
 
 interface JobListingProps {
@@ -39,7 +38,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
         const response = await databases.listDocuments("67ad9a8000273614f1f6", "67ad9ace00383939ae95")
         const fetchedJobs = response.documents as unknown as Job[]
         const filteredJobs =
-          category === "All" ? fetchedJobs : fetchedJobs.filter((job) => job.categories && job.categories.includes(category))
+          category === "All" ? fetchedJobs : fetchedJobs.filter((job) => job.department === category)
         setJobs(filteredJobs)
       } catch (error) {
         console.error("Error fetching jobs:", error)
@@ -136,7 +135,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
               className="bg-white rounded-lg shadow-lg w-[90%] max-w-2xl max-h-[90vh] overflow-y-auto relative z-10"
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+            exit={{ scale: 0.9, y: 20 }}
             >
               {modalContent === "apply" ? (
                 <div className="p-6">

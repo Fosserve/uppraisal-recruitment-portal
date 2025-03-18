@@ -19,6 +19,7 @@ import {
 export default function AdminDashboard() {
   const [user, setUser] = useState<{ name: string } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -31,6 +32,8 @@ export default function AdminDashboard() {
       } catch (error) {
         console.error("Error fetching user:", error);
         router.push("/login");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -46,12 +49,17 @@ export default function AdminDashboard() {
     }
   };
 
-  if (!user) {
+  if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
         <CircularProgress />
       </Box>
     );
+  }
+
+  if (!user) {
+    router.push("/login");
+    return null;
   }
 
   return (
