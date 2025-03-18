@@ -16,6 +16,9 @@ COPY . .
 # Build the application
 RUN npm run build
 
+# Verify the build exists
+RUN test -d .next && test -f .next/BUILD_ID || (echo "Build failed: .next directory or BUILD_ID file missing" && exit 1)
+
 # Use a smaller image for production
 FROM node:18-alpine AS production
 
