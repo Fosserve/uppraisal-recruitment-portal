@@ -6,6 +6,8 @@ import { Client, Databases, Query, type Models } from "appwrite"
 import { format } from "date-fns"
 import { Dialog, Transition } from "@headlessui/react"
 import { Edit, Trash2, X } from "lucide-react"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Alert, Button } from '@mui/material';
+
 
 // Constants
 const DATABASE_ID = "67ad9a8000273614f1f6"
