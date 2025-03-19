@@ -18,6 +18,7 @@
     "@mui/styled-engine-sc": "^6.4.3",
     "@mui/x-data-grid": "^7.27.2",
     "appwrite": "^14.0.1",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.4.2",
     "lucide": "^0.475.0",
     "lucide-react": "^0.475.0",

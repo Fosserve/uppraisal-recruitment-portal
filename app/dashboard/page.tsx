@@ -14,12 +14,17 @@ import {
   CircularProgress,
   useMediaQuery,
   useTheme,
+  Tabs,
+  Tab,
 } from "@mui/material";
+import JobManagement from "../components/submitted-jobs";
+import JobsPage from "../components/submitted-jobs";
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<{ name: string } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(0);
+  const [isLoading, setIsLoading] = useState(true); // Added isLoading state
   const router = useRouter();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -47,6 +52,10 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Logout failed:", error);
     }
+  };
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
   };
 
   if (isLoading) {
@@ -92,6 +101,7 @@ export default function AdminDashboard() {
         </Box>
       </Box>
 
+      {/* Modal for Posting a Job */}
       <Modal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -126,7 +136,25 @@ export default function AdminDashboard() {
         </Box>
       </Modal>
 
-      <JobApplicationPage />
+      {/* Tabs for Job Applications and Jobs */}
+      <Box sx={{ width: '100%', mt: 3 }}>
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
+          aria-label="Job and Application Tabs"
+          variant={isSmallScreen ? "scrollable" : "standard"}
+          scrollButtons="auto"
+        >
+          <Tab label="Job Applications" />
+          <Tab label="Posted Jobs" />
+        </Tabs>
+
+        {/* Tab Content */}
+        <Box sx={{ mt: 2 }}>
+          {activeTab === 0 && <JobApplicationPage />}
+          {activeTab === 1 && <JobsPage />}
+        </Box>
+      </Box>
     </Container>
   );
 }
