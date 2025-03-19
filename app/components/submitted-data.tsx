@@ -71,9 +71,8 @@ const JobApplicationPage: React.FC = () => {
 
   return (
     <div className="container w-full mx-auto p-6">
-      <Typography variant="h4" component="h3" className="mt-6 text-gray-700">
-        Submitted Applications
-      </Typography>
+              <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Submitted Applications</h1>
+
       {errors.message && <Alert severity="error">{errors.message}</Alert>}
       <TableContainer component={Paper} variant="outlined" className="mt-4">
         <Table>

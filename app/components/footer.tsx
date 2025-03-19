@@ -19,10 +19,10 @@ interface SocialItem extends NavigationItem {
 
 const navigation = {
   main: [
-    { name: "Home", href: "/" },
-    { name: "About Us", href: "/aboutus" },
-    { name: "Career", href: "/career" },
-    { name: "Our Services", href: "/services" },
+    { name: "Home", href: "https://uppraisalconsultant.in/" },
+    { name: "About Us", href: "https://uppraisalconsultant.in/about-us" },
+    { name: "Career", href: "https://uppraisalconsultant.in/careers" },
+    { name: "Our Services", href: "https://uppraisalconsultant.in/services" },
   ] as NavigationItem[],
   social: [
     {
