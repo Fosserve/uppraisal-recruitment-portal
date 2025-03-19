@@ -28,6 +28,7 @@ interface JobListingProps {
 
 const JobListing: React.FC<JobListingProps> = ({ category }) => {
   const [jobs, setJobs] = useState<Job[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [modalContent, setModalContent] = useState<"apply" | "view" | null>(null)
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
@@ -42,6 +43,8 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
         setJobs(filteredJobs)
       } catch (error) {
         console.error("Error fetching jobs:", error)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -61,59 +64,85 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
   }
 
   return (
-    <div className="job-listing p-4 sm:p-6 max-w-7xl  my-10 mx-auto">
+    <div className="job-listing p-4 sm:p-6 max-w-7xl my-10 mx-auto">
       <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">
         {category === "All" ? "All Job Listings" : `Jobs in ${category}`}
       </h2>
 
-      {jobs.length > 0 ? (
+      {isLoading ? (
+        <div className="space-y-4 flex justify-center flex-wrap items-center h-[100%] gap-6 w-[100%]">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="bg-[#ebf2fc] rounded-xl shadow-md shadow-[#b7e3ff] p-6 w-[100%] max-w-sm">
+              <div className="animate-pulse">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                  <div className="h-6 bg-gray-200 rounded w-16"></div>
+                </div>
+                <div className="mt-3">
+                  <div className="flex flex-wrap gap-2">
+                    <div className="h-6 bg-gray-200 rounded-full w-16"></div>
+                    <div className="h-6 bg-gray-200 rounded-full w-20"></div>
+                    <div className="h-6 bg-gray-200 rounded-full w-12"></div>
+                  </div>
+                </div>
+                <div className="mt-5">
+                  <div className="h-10 bg-gray-200 rounded-lg w-24 ml-auto"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : jobs.length > 0 ? (
         <div className="space-y-4 flex justify-center flex-wrap items-center h-[100%] gap-6 w-[100%]">
           {jobs.map((job) => (
-           <motion.div
-           key={job.$id}
-           className="bg-[#ebf2fc] rounded-xl shadow-md shadow-[#b7e3ff] p-6 transition-shadow duration-300 h-[100%] w-[100%] max-w-sm"
-           whileHover={{ y: -3 }}
-         >
-           {/* Job Title & Company */}
-           <div className="flex justify-between items-center">
-             <div>
-               <h3 className="text-xl font-semibold text-gray-900">{job.designation}</h3>
-               <p className="text-gray-500 text-sm">{job.company}</p>
-             </div>
-             <span className="text-sm font-medium bg-gray-100 text-gray-700 px-3 py-1 rounded-lg">
-               {job.experience}+ yrs exp
-             </span>
-           </div>
-     
-           {/* Key Skills */}
-           <div className="mt-3">
-             <div className="flex flex-wrap gap-2">
-               {job.keySkills.slice(0, 3).map((skill, index) => (
-                 <span
-                   key={index}
-                   className="px-3 py-1 bg-[#d7eeff] text-[#065de8] rounded-full text-xs font-medium"
-                 >
-                   {skill}
-                 </span>
-               ))}
-               {job.keySkills.length > 3 && (
-                 <span className="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-xs font-medium">
-                   +{job.keySkills.length - 3} more
-                 </span>
-               )}
-             </div>
-           </div>
-     
-           {/* View Details Button */}
-           <div className="mt-5 flex justify-end">
-             <button
-               onClick={() => handleView(job)}
-               className="text-white bg-[#065de8] hover:bg-[#0d78ff] transition-all duration-300 px-4 py-2 text-sm font-medium rounded-lg shadow-md"
-             >
-               View Details
-             </button>
-           </div>
-         </motion.div>
+            <motion.div
+              key={job.$id}
+              className="bg-[#ebf2fc] rounded-xl shadow-md shadow-[#b7e3ff] p-6 transition-shadow duration-300 h-[100%] w-[100%] max-w-sm"
+              whileHover={{ y: -3 }}
+            >
+              {/* Job Title & Company */}
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">{job.designation}</h3>
+                  <p className="text-gray-500 text-sm">{job.company}</p>
+                </div>
+                <span className="text-sm font-medium bg-gray-100 text-gray-700 px-3 py-1 rounded-lg">
+                  {job.experience}+ yrs exp
+                </span>
+              </div>
+        
+              {/* Key Skills */}
+              <div className="mt-3">
+                <div className="flex flex-wrap gap-2">
+                  {job.keySkills.slice(0, 3).map((skill, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-[#d7eeff] text-[#065de8] rounded-full text-xs font-medium"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                  {job.keySkills.length > 3 && (
+                    <span className="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-xs font-medium">
+                      +{job.keySkills.length - 3} more
+                    </span>
+                  )}
+                </div>
+              </div>
+        
+              {/* View Details Button */}
+              <div className="mt-5 flex justify-end">
+                <button
+                  onClick={() => handleView(job)}
+                  className="text-white bg-[#065de8] hover:bg-[#0d78ff] transition-all duration-300 px-4 py-2 text-sm font-medium rounded-lg shadow-md"
+                >
+                  View Details
+                </button>
+              </div>
+            </motion.div>
           ))}
         </div>
       ) : (
@@ -130,12 +159,12 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="fixed inset-0  bg-black/30 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+            <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setShowModal(false)} />
             <motion.div
               className="bg-white rounded-lg shadow-lg w-[90%] max-w-2xl max-h-[90vh] overflow-y-auto relative z-10"
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.9, y: 20 }}
+              exit={{ scale: 0.9, y: 20 }}
             >
               {modalContent === "apply" ? (
                 <div className="p-6">

@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { databases } from "../appwrite";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Alert, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Alert, Button, Chip } from '@mui/material';
 import { Edit, Trash2 } from "lucide-react";
-
+import { GridColDef } from '@mui/x-data-grid';
+import { APPLICANT_COLLECTION_ID, PROJECT_ID, RESUME_STORAGE_ID } from "../utils";
 const DATABASE_ID = "67ad9a8000273614f1f6";
 const COLLECTION_ID = "67adb77a003aad67eb41";
 
@@ -127,6 +128,7 @@ const JobApplicationPage: React.FC = () => {
     [ApplicationStatus.Shortlisted]: "primary",
   };
 
+
   const columns: GridColDef[] = [
     { field: "name", headerName: "Name", flex: 1 },
     { field: "phone", headerName: "Phone", flex: 1 },
@@ -136,7 +138,7 @@ const JobApplicationPage: React.FC = () => {
       field: "resume",
       headerName: "Resume",
       flex: 1,
-      renderCell: (params) =>
+      renderCell: (params:any) =>
         params.value ? (
           <Button
             href={`https://cloud.appwrite.io/v1/storage/buckets/${RESUME_STORAGE_ID}/files/${params.value}/view?project=${PROJECT_ID}&mode=admin`}
@@ -153,7 +155,7 @@ const JobApplicationPage: React.FC = () => {
       field: "status",
       headerName: "Status",
       flex: 1,
-      renderCell: (params) => (
+      renderCell: (params:any) => (
         <Chip label={params.value} color={statusColors[params.value as ApplicationStatus] || "default"} />
       ),
     },
@@ -161,7 +163,7 @@ const JobApplicationPage: React.FC = () => {
       field: "actions",
       headerName: "Actions",
       flex: 1,
-      renderCell: (params) => (
+      renderCell: (params:any) => (
         <div style={{ display: "flex", gap: "8px",marginTop:'10px' }}>
           <Button
             variant="contained"
@@ -195,43 +197,43 @@ const JobApplicationPage: React.FC = () => {
                 <tr>
                   <th
                     scope="col"
-                    className="px-5 text-center py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    className="px-5  py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                   >
                     Name
                   </th>
                   <th
                     scope="col"
-                    className="px-5 text-center py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    className="px-5  py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                   >
                     Email
                   </th>
                   <th
                     scope="col"
-                    className="px-5 text-center py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    className="px-5  py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                   >
                     Phone
                   </th>
                   <th
                     scope="col"
-                    className="px-5 py-3 text-center text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    className="px-5 py-3  text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                   >
                     Position
                   </th>
                   <th
                     scope="col"
-                    className="px-5 py-3 text-center text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    className="px-5 py-3  text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                   >
                     Experience
                   </th>
                   <th
                     scope="col"
-                    className="px-5 py-3 text-center text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    className="px-5 py-3  text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                   >
                     Resume
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-center text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    className="px-6 py-3  text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                   >
                     Additional Info
                   </th>
@@ -265,7 +267,7 @@ const JobApplicationPage: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {app.resume ? (
                           <Button
-                            href={app.resume}
+                            href={`https://cloud.appwrite.io/v1/storage/buckets/${RESUME_STORAGE_ID}/files/${app.resume}/view?project=${PROJECT_ID}&mode=admin`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"

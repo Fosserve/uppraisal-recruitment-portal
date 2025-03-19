@@ -4,14 +4,13 @@ import type React from "react"
 import { useState, useEffect, Fragment } from "react"
 import { Client, Databases, Query, type Models } from "appwrite"
 import { format } from "date-fns"
-import { Dialog, Transition } from "@headlessui/react"
 import { Edit, Trash2, X } from "lucide-react"
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Alert, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Alert, Button, Modal, Box, IconButton, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Chip } from '@mui/material';
+import { DATABASE_ID, JOB_COLLECTION_ID } from "../utils"
+import { databases } from "../appwrite"
 
 
-// Constants
-const DATABASE_ID = "67ad9a8000273614f1f6"
-const JOB_COLLECTION_ID = "67ad9ace00383939ae95"
+
 
 // Types
 interface Job extends Models.Document {
@@ -28,14 +27,7 @@ interface Job extends Models.Document {
   datePosted?: string
 }
 
-// Initialize Appwrite client
-const client = new Client()
-  .setEndpoint("https://cloud.appwrite.io/v1")
-  .setProject("67ad93cc00138d79087a")
 
-console.log("Appwrite Client Initialized:", client) // Debug log
-
-const databases = new Databases(client)
 
 // Appwrite Service Functions
 const getJobs = async (): Promise<Job[]> => {
@@ -83,64 +75,64 @@ function DeleteConfirmDialog({
   jobTitle: string
 }) {
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black/25" />
-        </Transition.Child>
-
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 dark:text-white">
-                  Delete Confirmation
-                </Dialog.Title>
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Are you sure you want to delete the job listing <span className="font-semibold">{jobTitle}</span>?
-                    This action cannot be undone.
-                  </p>
-                </div>
-
-                <div className="mt-6 flex justify-end space-x-3">
-                  <button
-                    type="button"
-                    className="inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                    onClick={onClose}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-                    onClick={onConfirm}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition>
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      aria-labelledby="delete-confirmation-modal"
+      aria-describedby="delete-confirmation-description"
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Box
+        sx={{
+          backgroundColor: 'background.paper',
+          borderRadius: 2,
+          boxShadow: 24,
+          p: 4,
+          width: 400,
+          maxWidth: '90%',
+        }}
+      >
+        <Typography id="delete-confirmation-modal" variant="h6" component="h2" gutterBottom>
+          Delete Confirmation
+        </Typography>
+        <Typography id="delete-confirmation-description" variant="body1" sx={{ mb: 3 }}>
+          Are you sure you want to delete the job listing <strong>{jobTitle}</strong>?
+          This action cannot be undone.
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+          <Button
+            variant="outlined"
+            onClick={onClose}
+            sx={{
+              color: 'text.primary',
+              borderColor: 'divider',
+              '&:hover': {
+                backgroundColor: 'action.hover',
+              },
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={onConfirm}
+            sx={{
+              backgroundColor: 'error.main',
+              '&:hover': {
+                backgroundColor: 'error.dark',
+              },
+            }}
+          >
+            Delete
+          </Button>
+        </Box>
+      </Box>
+    </Modal>
   )
 }
 
@@ -211,281 +203,189 @@ function EditJobModal({
   }
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black/25" />
-        </Transition.Child>
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      aria-labelledby="edit-job-modal"
+      aria-describedby="edit-job-form"
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Box
+        sx={{
+          backgroundColor: 'background.paper',
+          borderRadius: 2,
+          boxShadow: 24,
+          p: 4,
+          width: '100%',
+          maxWidth: '800px',
+          mx: 2,
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography variant="h6" component="h2">
+            Edit Job
+          </Typography>
+          <IconButton onClick={onClose}>
+            <X />
+          </IconButton>
+        </Box>
 
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
-                <div className="flex justify-between items-center mb-4">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 dark:text-white">
-                    Edit Job
-                  </Dialog.Title>
-                  <button
-                    onClick={onClose}
-                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label
-                        htmlFor="designation"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                      >
-                        Designation
-                      </label>
-                      <input
-                        type="text"
-                        id="designation"
-                        name="designation"
-                        value={formData.designation}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="department"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                      >
-                        Department
-                      </label>
-                      <input
-                        type="text"
-                        id="department"
-                        name="department"
-                        value={formData.department}
-                        onChange={handleChange}
-                        required
-                        placeholder="e.g. Engineering, Marketing, Sales"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label
-                        htmlFor="company"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                      >
-                        Company
-                      </label>
-                      <input
-                        type="text"
-                        id="company"
-                        name="company"
-                        value={formData.company}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="companyWebsite"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                      >
-                        Company Website
-                      </label>
-                      <input
-                        type="url"
-                        id="companyWebsite"
-                        name="companyWebsite"
-                        value={formData.companyWebsite}
-                        onChange={handleChange}
-                        placeholder="https://example.com"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label
-                        htmlFor="employmentType"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                      >
-                        Employment Type
-                      </label>
-                      <select
-                        id="employmentType"
-                        name="employmentType"
-                        value={formData.employmentType}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      >
-                        <option value="Full-time">Full-time</option>
-                        <option value="Part-time">Part-time</option>
-                        <option value="Contract">Contract</option>
-                        <option value="Internship">Internship</option>
-                        <option value="Freelance">Freelance</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="workMode"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                      >
-                        Work Mode
-                      </label>
-                      <select
-                        id="workMode"
-                        name="workMode"
-                        value={formData.workMode}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      >
-                        <option value="In-office">In-office</option>
-                        <option value="Remote">Remote</option>
-                        <option value="Hybrid">Hybrid</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label
-                        htmlFor="experience"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                      >
-                        Experience
-                      </label>
-                      <input
-                        type="text"
-                        id="experience"
-                        name="experience"
-                        value={formData.experience}
-                        onChange={handleChange}
-                        placeholder="e.g. 2-4 years"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="location"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                      >
-                        Location
-                      </label>
-                      <input
-                        type="text"
-                        id="location"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="keySkills"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                    >
-                      Key Skills
-                    </label>
-                    <div className="space-y-2">
-                      <input
-                        type="text"
-                        id="keySkills"
-                        value={skillInput}
-                        onChange={(e) => setSkillInput(e.target.value)}
-                        onKeyDown={handleSkillInput}
-                        placeholder="Type a skill and press Enter"
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                      />
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {formData.keySkills.map((skill) => (
-                          <span
-                            key={skill}
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100"
-                          >
-                            {skill}
-                            <button
-                              type="button"
-                              onClick={() => removeSkill(skill)}
-                              className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-500 focus:outline-none focus:bg-blue-500 focus:text-white"
-                            >
-                              <X className="h-3 w-3" />
-                              <span className="sr-only">Remove {skill}</span>
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="description"
-                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                    >
-                      Description
-                    </label>
-                    <textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                      rows={5}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Designation"
+                id="designation"
+                name="designation"
+                value={formData.designation}
+                onChange={handleChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Department"
+                id="department"
+                name="department"
+                value={formData.department}
+                onChange={handleChange}
+                required
+                placeholder="e.g. Engineering, Marketing, Sales"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Company"
+                id="company"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Company Website"
+                id="companyWebsite"
+                name="companyWebsite"
+                value={formData.companyWebsite}
+                onChange={handleChange}
+                placeholder="https://example.com"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <InputLabel>Employment Type</InputLabel>
+                <Select
+                  label="Employment Type"
+                  id="employmentType"
+                  name="employmentType"
+                  value={formData.employmentType}
+                  onChange={(e) => handleChange(e as React.ChangeEvent<HTMLInputElement>)}
+                >
+                  <MenuItem value="Full-time">Full-time</MenuItem>
+                  <MenuItem value="Part-time">Part-time</MenuItem>
+                  <MenuItem value="Contract">Contract</MenuItem>
+                  <MenuItem value="Internship">Internship</MenuItem>
+                  <MenuItem value="Freelance">Freelance</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <InputLabel>Work Mode</InputLabel>
+                <Select
+                  label="Work Mode"
+                  id="workMode"
+                  name="workMode"
+                  value={formData.workMode}
+                  onChange={(e) => handleChange(e as React.ChangeEvent<HTMLInputElement>)}
+                >
+                  <MenuItem value="In-office">In-office</MenuItem>
+                  <MenuItem value="Remote">Remote</MenuItem>
+                  <MenuItem value="Hybrid">Hybrid</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Experience"
+                id="experience"
+                name="experience"
+                value={formData.experience}
+                onChange={handleChange}
+                placeholder="e.g. 2-4 years"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Location"
+                id="location"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <TextField
+                  label="Key Skills"
+                  value={skillInput}
+                  onChange={(e) => setSkillInput(e.target.value)}
+                  onKeyDown={handleSkillInput}
+                  placeholder="Type a skill and press Enter"
+                />
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
+                  {formData.keySkills.map((skill) => (
+                    <Chip
+                      key={skill}
+                      label={skill}
+                      onDelete={() => removeSkill(skill)}
+                      deleteIcon={<X />}
                     />
-                  </div>
+                  ))}
+                </Box>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Description"
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                multiline
+                rows={5}
+              />
+            </Grid>
+          </Grid>
 
-                  <div className="mt-6 flex justify-end space-x-3">
-                    <button
-                      type="button"
-                      onClick={onClose}
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isSubmitting ? "Saving..." : "Save Changes"}
-                    </button>
-                  </div>
-                </form>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-      </Dialog>
-    </Transition>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+            <Button variant="outlined" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Saving..." : "Save Changes"}
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+    </Modal>
   )
 }
 

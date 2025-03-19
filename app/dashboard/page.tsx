@@ -23,7 +23,8 @@ import JobsPage from "../components/submitted-jobs";
 export default function AdminDashboard() {
   const [user, setUser] = useState<{ name: string } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState(0); // State to manage active tab
+  const [activeTab, setActiveTab] = useState(0);
+  const [isLoading, setIsLoading] = useState(true); // Added isLoading state
   const router = useRouter();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -54,10 +55,8 @@ export default function AdminDashboard() {
   };
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue); // Update the active tab
+    setActiveTab(newValue);
   };
-
-
 
   if (isLoading) {
     return (
@@ -152,8 +151,8 @@ export default function AdminDashboard() {
 
         {/* Tab Content */}
         <Box sx={{ mt: 2 }}>
-          {activeTab === 0 && <JobApplicationPage />} {/* Job Applications Tab */}
-          {activeTab === 1 && <JobsPage />} {/* Posted Jobs Tab */}
+          {activeTab === 0 && <JobApplicationPage />}
+          {activeTab === 1 && <JobsPage />}
         </Box>
       </Box>
     </Container>
