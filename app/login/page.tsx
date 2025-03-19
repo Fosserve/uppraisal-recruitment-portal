@@ -96,6 +96,12 @@ const LoginPage: React.FC = () => {
           >
             Sign in
           </button>
+          {/* <Link
+            href="/register"
+            className="w-full block text-center rounded-md bg-gray-600 px-4 py-2 text-white hover:bg-gray-500"
+          >
+            Register
+          </Link> */}
         </form>
       </div>
     </div>
