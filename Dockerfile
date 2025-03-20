@@ -1,23 +1,21 @@
-# Use an official Node.js image
-FROM node:18-alpine 
+# Use official Node.js LTS image optimized for Next.js
+FROM node:18-alpine
 
-# Set working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Install dependencies first for better caching
+COPY package.json package-lock.json ./
+RUN npm install --frozen-lockfile
 
-# Install dependencies
-RUN npm install
-
-# Copy the entire project
+# Copy application files
 COPY . .
 
-# Build the Next.js app
+# Build the Next.js application
 RUN npm run build
 
-# Expose the required port
+# Expose the port defined in docker-compose
 EXPOSE 8123
 
-# Start Next.js on port 8123
-CMD ["npm", "run", "start", "--", "-p", "8123"]
+# Start the production server
+CMD ["npm", "start", "--", "-p", "8123"]
