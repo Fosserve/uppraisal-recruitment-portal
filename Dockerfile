@@ -1,21 +1,14 @@
-# Use official Node.js LTS image optimized for Next.js
-FROM node:18-alpine
+FROM node:20 as builder
 
-# Set working directory
-WORKDIR /app
+COPY package.json /tmp/package.json
+RUN cd /tmp && yarn install --ignore-engines
+RUN mkdir -p /usr/src/app && cp -a /tmp/node_modules /usr/src/app/
 
-# Install dependencies first for better caching
-COPY package.json package-lock.json ./
-RUN npm install --frozen-lockfile
-
-# Copy application files
-COPY . .
-
-# Build the Next.js application
-RUN npm run build
-
-# Expose the port defined in docker-compose
-EXPOSE 8123
-
-# Start the production server
-CMD ["npm", "start", "--", "-p", "8123"]
+WORKDIR /usr/src/app
+ENV PATH /usr/src/app/node_modules/.bin:$PATH
+COPY . /usr/src/app
+RUN yarn build
+ENV NODE_ENV production
+ENV PORT 3000
+EXPOSE 3000
+CMD ["npm", "start"]
