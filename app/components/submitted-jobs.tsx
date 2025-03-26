@@ -8,11 +8,11 @@ import { Dialog, Transition } from "@headlessui/react"
 import { Edit, Trash2, X } from "lucide-react"
 import { DataGrid } from "@mui/x-data-grid";
 import { Button, CircularProgress, DialogActions, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
+import { databases } from "../appwrite"
+import { DATABASE_ID, JOB_COLLECTION_ID } from "../utils"
 
 
-// Constants
-const DATABASE_ID = "67ad9a8000273614f1f6"
-const JOB_COLLECTION_ID = "67ad9ace00383939ae95"
+
 
 // Employment Types and Work Modes
 type EmploymentType = "Full-time" | "Part-time" | "Contract" | "Internship" | "Freelance";
@@ -47,14 +47,6 @@ interface Job extends Models.Document {
   datePosted?: string
 }
 
-// Initialize Appwrite client
-const client = new Client()
-  .setEndpoint("https://cloud.appwrite.io/v1")
-  .setProject("67ad93cc00138d79087a")
-
-console.log("Appwrite Client Initialized:", client) // Debug log
-
-const databases = new Databases(client)
 
 // Appwrite Service Functions
 const getJobs = async (): Promise<Job[]> => {

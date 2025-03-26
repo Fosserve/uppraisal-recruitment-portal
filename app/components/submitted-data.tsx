@@ -4,9 +4,8 @@ import { useState, useEffect } from "react";
 import { databases } from "../appwrite";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Alert, Button, Container, Typography } from "@mui/material";
+import { DATABASE_ID, JOB_COLLECTION_ID, PROJECT_ID, RESUME_STORAGE_ID } from "../utils";
 
-const DATABASE_ID = "67ad9a8000273614f1f6";
-const COLLECTION_ID = "67adb77a003aad67eb41";
 
 type Application = {
   $id: string;
@@ -29,7 +28,7 @@ const JobApplicationPage: React.FC = () => {
 
   const fetchApplications = async () => {
     try {
-      const response = await databases.listDocuments(DATABASE_ID, COLLECTION_ID);
+      const response = await databases.listDocuments(DATABASE_ID, JOB_COLLECTION_ID);
       setApplications(response.documents as unknown as Application[]);
     } catch (error) {
       console.error("Error fetching applications:", error);
@@ -50,7 +49,7 @@ const JobApplicationPage: React.FC = () => {
       renderCell: (params) =>
         params.value ? (
           <Button
-            href={params.value}
+            href={`https://cloud.appwrite.io/v1/storage/buckets/${RESUME_STORAGE_ID}/files/${params.value}/view?project=${PROJECT_ID}&mode=admin`}
             target="_blank"
             rel="noopener noreferrer"
             variant="contained"
