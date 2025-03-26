@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { databases } from "../appwrite";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Alert, Button, Container, Typography } from "@mui/material";
-import { DATABASE_ID, JOB_COLLECTION_ID, PROJECT_ID, RESUME_STORAGE_ID } from "../utils";
+import { APPLICANT_COLLECTION_ID, DATABASE_ID, PROJECT_ID, RESUME_STORAGE_ID } from "../utils";
+
 
 
 type Application = {
@@ -28,7 +29,7 @@ const JobApplicationPage: React.FC = () => {
 
   const fetchApplications = async () => {
     try {
-      const response = await databases.listDocuments(DATABASE_ID, JOB_COLLECTION_ID);
+      const response = await databases.listDocuments(DATABASE_ID, APPLICANT_COLLECTION_ID);
       setApplications(response.documents as unknown as Application[]);
     } catch (error) {
       console.error("Error fetching applications:", error);
