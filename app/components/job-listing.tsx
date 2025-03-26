@@ -6,6 +6,7 @@ import JobApplicationStepper from "./stepper"
 import { motion, AnimatePresence } from "framer-motion"
 import { databases } from "../appwrite"
 import { Building2, Clock, MapPin, Briefcase, GraduationCap, Globe } from "lucide-react"
+import { DATABASE_ID, JOB_COLLECTION_ID } from "../utils"
 
 interface Job {
   $createdAt: string | number | Date
@@ -31,6 +32,7 @@ interface JobListingProps {
 
 const JobListing: React.FC<JobListingProps> = ({ category }) => {
   const [jobs, setJobs] = useState<Job[]>([])
+  const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [modalContent, setModalContent] = useState<"apply" | "view" | null>(null)
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
@@ -38,7 +40,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await databases.listDocuments("67ad9a8000273614f1f6", "67ad9ace00383939ae95")
+        const response = await databases.listDocuments(DATABASE_ID, JOB_COLLECTION_ID)
         const fetchedJobs = response.documents as unknown as Job[]
         const filteredJobs =
           category === "All" ? fetchedJobs : fetchedJobs.filter((job) => job.categories && job.categories.includes(category))
@@ -53,6 +55,8 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
         setJobs(sortedJobs)
       } catch (error) {
         console.error("Error fetching jobs:", error)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -77,7 +81,20 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
         {category === "All" ? "All Job Listings" : `Jobs in ${category}`}
       </h2>
 
-      {jobs.length > 0 ? (
+      {loading ? (
+        <div className="space-y-4 flex justify-center flex-wrap items-center h-[100%] gap-6 w-[100%]">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="bg-gray-200 animate-pulse rounded-xl shadow-md p-6 h-[100%] w-[100%] max-w-sm">
+              <div className="h-6 bg-gray-300 rounded w-3/4 mb-4"></div>
+              <div className="h-4 bg-gray-300 rounded w-1/2 mb-4"></div>
+              <div className="h-4 bg-gray-300 rounded w-1/4 mb-4"></div>
+              <div className="h-4 bg-gray-300 rounded w-full mb-4"></div>
+              <div className="h-4 bg-gray-300 rounded w-full mb-4"></div>
+              <div className="h-4 bg-gray-300 rounded w-1/2 mb-4"></div>
+            </div>
+          ))}
+        </div>
+      ) : jobs.length > 0 ? (
         <div className="space-y-4 flex justify-center flex-wrap items-center h-[100%] gap-6 w-[100%]">
           {jobs.map((job) => (
            <motion.div
@@ -87,11 +104,11 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
            }`}
            whileHover={{ y: -3 }}
          >
-           {/* {job.featured && (
-             <div className=" bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+           {job.featured && (
+             <span className="bg-indigo-600 text-white px-2 py-1 rounded-full text-xs font-semibold float-right">
                Featured
-             </div>
-           )} */}
+             </span>
+           )}
            {/* Job Title & Company */}
            <div className="flex justify-between items-center">
              <div>

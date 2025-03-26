@@ -9,14 +9,31 @@ import Timeline from './components/timeline'
 import JobListing from './components/job-listing'
 import TestimonialCarousel from './components/testimonial'
 import SubmittedData from './components/submitted-data'
+import { databases } from './appwrite'
+import { DATABASE_ID, JOB_COLLECTION_ID } from './utils'
 
 const page = () => {
-  const categories = ['All', 'Trending', 'Engineering', 'Marketing', 'Sales', 'Design'];
+  const [categories, setCategories] = useState<string[]>(['All']);
   const [selectedCategory, setSelectedCategory] = useState('All');
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await databases.listDocuments(DATABASE_ID, JOB_COLLECTION_ID);
+        const allCategories = response.documents.map((doc: any) => doc.department).flat();
+        const uniqueCategories = Array.from(new Set(allCategories));
+        setCategories(['All', ...uniqueCategories]);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <div className='bg-[#f9fafc]'>
-              <Header />
+      <Header />
 
       {/* <Header /> */}
       {/* <HeroSection /> */}
