@@ -87,11 +87,11 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
            }`}
            whileHover={{ y: -3 }}
          >
-           {job.featured && (
-             <div className="absolute -top-2 -right-2 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+           {/* {job.featured && (
+             <div className=" bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
                Featured
              </div>
-           )}
+           )} */}
            {/* Job Title & Company */}
            <div className="flex justify-between items-center">
              <div>
