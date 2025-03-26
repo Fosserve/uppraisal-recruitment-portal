@@ -29,6 +29,8 @@ interface JobData {
   department: string
   keySkills: string[]
   description: string
+  featured: boolean
+  categories: string[]
 }
 
 export default function PostJob() {
@@ -43,10 +45,13 @@ export default function PostJob() {
     department: "",
     keySkills: [],
     description: "",
+    featured: false,
+    categories: ["All"]
   })
 
   const [skillInput, setSkillInput] = useState("")
   const [previewLogo, setPreviewLogo] = useState<string>("")
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false)
   const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -94,21 +99,42 @@ export default function PostJob() {
 
     try {
       const databases = new Databases(client)
+      
+      // Validate required fields
+      if (!jobData.designation || !jobData.company || !jobData.companyWebsite || 
+          !jobData.experience || !jobData.location || !jobData.department || 
+          !jobData.description || jobData.keySkills.length === 0) {
+        alert("Please fill in all required fields and add at least one skill")
+        return
+      }
 
-      await databases.createDocument(DATABASE_ID, JOB_COLLECTION_ID, ID.unique(), jobData)
+      // Create the job document
+      const jobDocument = {
+        ...jobData,
+        $createdAt: new Date().toISOString(),
+        $updatedAt: new Date().toISOString()
+      }
 
-      alert("Job posted successfully!")
-      router.push("/")
-    } catch (error) {
+      await databases.createDocument(DATABASE_ID, JOB_COLLECTION_ID, ID.unique(), jobDocument)
+
+      // Show success popup
+      setShowSuccessPopup(true)
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        router.push("/dashboard")
+      }, 2000)
+
+    } catch (error: any) {
       console.error("Error posting job:", error)
-      alert("Failed to post job. Please try again.")
+      alert(`Failed to post job: ${error.message || "Please try again."}`)
     }
   }
 
   return (
     <div className="min-h-screen">
-      <div className=" mx-auto ">
-        <div className=" p-2">
+      <div className="mx-auto">
+        <div className="p-2">
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="bg-gray-50 rounded-lg p-6 space-y-6">
               <h3 className="text-xl font-semibold text-gray-900">Company Information</h3>
@@ -275,6 +301,20 @@ export default function PostJob() {
                     className="block mt-2 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 placeholder-gray-400 focus:ring-[#2498ff] focus:border-[#2498ff] sm:text-sm"
                   />
                 </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    name="featured"
+                    checked={jobData.featured}
+                    onChange={(e) => setJobData({ ...jobData, featured: e.target.checked })}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="featured" className="ml-2 block text-sm text-gray-900">
+                    Featured Job (will appear at the top)
+                  </label>
+                </div>
               </div>
 
               <div>
@@ -339,6 +379,38 @@ export default function PostJob() {
           </form>
         </div>
       </div>
+
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative z-10">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                <svg
+                  className="h-6 w-6 text-green-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Job Posted Successfully!
+              </h3>
+              <p className="text-sm text-gray-500">
+                Redirecting to dashboard...
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

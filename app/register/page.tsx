@@ -1,13 +1,7 @@
 "use client"
 import { useState } from "react";
-import { Client, Account, ID } from "appwrite";
 import Link from "next/link";
-
-const client = new Client()
-  .setEndpoint("https://cloud.appwrite.io/v1") // Replace with your Appwrite endpoint
-  .setProject("67ad93cc00138d79087a"); 
-
-const account = new Account(client);
+import { account } from "@/app/appwrite";
 
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -28,11 +22,11 @@ const RegisterForm: React.FC = () => {
     setError("");
 
     try {
-      await account.create(ID.unique(), formData.email, formData.password, formData.username);
+      await account.create('unique()', formData.email, formData.password, formData.username);
       alert("Registration successful!");
-      window.location.href = "/dashboard"; // Redirect to dashboard after success
+      window.location.href = "/dashboard";
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -99,3 +93,4 @@ const RegisterForm: React.FC = () => {
 };
 
 export default RegisterForm;
+

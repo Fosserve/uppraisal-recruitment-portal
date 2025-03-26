@@ -1,5 +1,3 @@
-
-
 "use client"
 
 import type React from "react"
@@ -93,37 +91,91 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
     maxFiles: 1,
   })
 
-const handleSubmit = async () => {
-  if (validateStep(currentStep)) {
-    try {
-      const resumeFile = formData.resume;
-      if (resumeFile) {
-        const file = await storage.createFile(RESUME_STORAGE_ID, ID.unique(), resumeFile);
-        console.log(file)
-        const fileUrl = file.$id; // Assuming $id is the correct property to use for the file reference
-        const dataToSubmit = {
-          name: formData.name,
-          email: formData.email,
-          position: formData.position,
-          phone: formData.phone,
-          experience: formData.experience,
-          resume: fileUrl,
-          additionalInfo: formData.additionalInfo,
-        };
-
-        await databases.createDocument(DATABASE_ID, APPLICANT_COLLECTION_ID, ID.unique(), dataToSubmit);
-
-        alert("Application submitted successfully!");
-      } else {
-        console.error("No resume file selected.");
-        alert("Please select a resume file to submit.");
+  const handleSubmit = async () => {
+    if (validateStep(currentStep)) {
+      try {
+        const resumeFile = formData.resume;
+        if (!resumeFile) {
+          alert("Please select a resume file to submit.");
+          return;
+        }
+  
+        let fileId = null;
+  
+        try {
+          const uniqueFileId = ID.unique();
+          const file = await storage.createFile(RESUME_STORAGE_ID, uniqueFileId, resumeFile);
+  
+          if (!file || !file.$id) {
+            throw new Error("File upload failed");
+          }
+  
+          fileId = file.$id;
+          console.log("File uploaded successfully:", fileId);
+        } catch (fileError) {
+          console.error("Error uploading file:", fileError);
+          alert("Failed to upload resume. Please try again.");
+          return;
+        }
+  
+        try {
+          const uniqueDocId = ID.unique();
+          const dataToSubmit = {
+            name: formData.name,
+            email: formData.email,
+            position: formData.position,
+            phone: formData.phone,
+            experience: formData.experience,
+            resume: fileId,
+            additionalInfo: formData.additionalInfo,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+  
+          const document = await databases.createDocument(
+            DATABASE_ID,
+            APPLICANT_COLLECTION_ID,
+            uniqueDocId,
+            dataToSubmit
+          );
+  
+          if (!document || !document.$id) {
+            throw new Error("Document creation failed");
+          }
+  
+          console.log("Application submitted successfully:", document);
+          alert("Application submitted successfully!");
+  
+          // Reset form after successful submission
+          setFormData({
+            name: "",
+            email: "",
+            phone: "",
+            position: jobTitle,
+            experience: "",
+            resume: null,
+            additionalInfo: "",
+          });
+          setCurrentStep(1);
+        } catch (docError) {
+          console.error("Error creating document:", docError);
+  
+          if (fileId) {
+            try {
+              await storage.deleteFile(RESUME_STORAGE_ID, fileId);
+              console.log("Rolled back uploaded file:", fileId);
+            } catch (deleteError) {
+              console.error("Error deleting file after failed submission:", deleteError);
+            }
+          }
+          alert("Failed to submit application. Please check your data and try again.");
+        }
+      } catch (error) {
+        console.error("Unexpected error in submission process:", error);
+        alert("An unexpected error occurred. Please try again.");
       }
-    } catch (error) {
-      console.error("Error submitting application:", error);
-      alert("Failed to submit application. Please try again.");
     }
-  }
-}
+  };
 
   const renderStep = () => {
     switch (currentStep) {
@@ -240,12 +292,12 @@ const handleSubmit = async () => {
                 <p className="text-gray-600 text-sm">Additional Information: {formData.additionalInfo}</p>
               </div>
             </div>
-            <button
+            {/* <button
               onClick={handleSubmit}
               className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors"
             >
               Submit Application
-            </button>
+            </button> */}
           </div>
         )
       default:
@@ -293,12 +345,19 @@ const handleSubmit = async () => {
               Previous
             </button>
           )}
-          {currentStep < 3 && (
+          {currentStep < 3 ? (
             <button
               onClick={handleNext}
               className="px-6 py-2 bg-[#0d78ff] text-white rounded-lg hover:bg-[#2498ff] transition-colors ml-auto"
             >
               Next
+            </button>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors ml-auto"
+            >
+              Submit Application
             </button>
           )}
         </div>

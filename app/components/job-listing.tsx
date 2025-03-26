@@ -8,6 +8,7 @@ import { databases } from "../appwrite"
 import { Building2, Clock, MapPin, Briefcase, GraduationCap, Globe } from "lucide-react"
 
 interface Job {
+  $createdAt: string | number | Date
   $id: string
   designation: string
   company: string
@@ -21,6 +22,7 @@ interface Job {
   keySkills: string[]
   description: string
   categories: string[]
+  featured: boolean
 }
 
 interface JobListingProps {
@@ -40,7 +42,15 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
         const fetchedJobs = response.documents as unknown as Job[]
         const filteredJobs =
           category === "All" ? fetchedJobs : fetchedJobs.filter((job) => job.categories && job.categories.includes(category))
-        setJobs(filteredJobs)
+        
+        // Sort jobs: featured jobs first, then by creation date
+        const sortedJobs = filteredJobs.sort((a, b) => {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime();
+        });
+        
+        setJobs(sortedJobs)
       } catch (error) {
         console.error("Error fetching jobs:", error)
       }
@@ -72,9 +82,16 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
           {jobs.map((job) => (
            <motion.div
            key={job.$id}
-           className="bg-[#ebf2fc] rounded-xl shadow-md shadow-[#b7e3ff] p-6 transition-shadow duration-300 h-[100%] w-[100%] max-w-sm"
+           className={`bg-[#ebf2fc] rounded-xl shadow-md shadow-[#b7e3ff] p-6 transition-shadow duration-300 h-[100%] w-[100%] max-w-sm ${
+             job.featured ? 'border-2 border-blue-500' : ''
+           }`}
            whileHover={{ y: -3 }}
          >
+           {job.featured && (
+             <div className="absolute -top-2 -right-2 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+               Featured
+             </div>
+           )}
            {/* Job Title & Company */}
            <div className="flex justify-between items-center">
              <div>

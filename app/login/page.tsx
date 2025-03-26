@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { account, ID } from "../appwrite";
-import { useRouter } from "next/navigation"
-
-
+import { useRouter } from "next/navigation";
+import { account } from "@/app/appwrite";
 
 interface User {
+  $id: string;
   name: string;
+  email: string;
 }
 
 const LoginPage: React.FC = () => {
@@ -16,43 +16,39 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const router = useRouter()
+  const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
 
   const login = async (email: string, password: string) => {
     try {
       await account.createEmailPasswordSession(email, password);
-      
       const user = await account.get();
-      console.log("Logged in user:", user); 
+      console.log("Logged in user:", user);
       setLoggedInUser(user);
-  
-      router.push("/dashboard"); 
+      router.push("/dashboard");
     } catch (error: any) {
       console.error("Login Error:", error);
       setError(error.message || "Login failed. Please check your credentials.");
     }
   };
 
-
   const register = async () => {
     try {
-      await account.create(ID.unique(), email, password, name);
-      router.push("/dashboard")
+      await account.create('unique()', email, password, name);
       await login(email, password);
-    } catch (error) {
-      setError("Registration failed. Please try again.");
+    } catch (error: any) {
+      setError(error.message || "Registration failed. Please try again.");
     }
   };
 
   const logout = async () => {
     try {
-      await account.deleteSession("current");
+      await account.deleteSession('current');
       setLoggedInUser(null);
+      router.push("/login");
     } catch (error) {
-      setError("Logout failed. Please try again.");
+      console.error("Logout failed:", error);
     }
   };
 
