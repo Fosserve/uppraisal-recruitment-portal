@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { XCircle } from "lucide-react"
 import { DATABASE_ID, JOB_COLLECTION_ID, LOGO_STORAGE_ID } from "../utils"
+import ReactMarkdown from 'react-markdown'
 
 // Define employment types and work modes as constants
 const EMPLOYMENT_TYPES = ["Full-time", "Part-time", "Contract", "Internship", "Freelance"] as const
@@ -189,7 +190,8 @@ export default function PostJob() {
                     type="file"
                     accept="image/*"
                     onChange={handleLogoUpload}
-                    className="block mt-2 w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    className="block mt-2 w-full text-sm text-gray-5
+                    file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                   />
                 </div>
               </div>

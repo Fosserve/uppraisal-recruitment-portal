@@ -183,7 +183,7 @@ const JobListing: React.FC<JobListingProps> = ({ category }) => {
                       </svg>
                     </button>
                   </div>
-                  <JobApplicationStepper jobTitle={selectedJob.designation} />
+                  <JobApplicationStepper jobTitle={selectedJob.designation} experience={selectedJob.experience} />
                 </div>
               ) : (
                 <div className="p-6">

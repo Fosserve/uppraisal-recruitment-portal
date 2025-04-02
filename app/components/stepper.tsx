@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { FiUser, FiBriefcase, FiCheckCircle } from "react-icons/fi"
 import { useDropzone } from "react-dropzone"
 import { databases, ID, storage } from "../appwrite"
 import {  APPLICANT_COLLECTION_ID, DATABASE_ID, RESUME_STORAGE_ID  } from "../utils"
-import { useRouter } from "next/router"
-
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 type FormData = {
   name: string
@@ -24,34 +24,65 @@ type Errors = {
 }
 
 interface JobApplicationFormProps {
-  jobTitle: string
+  jobTitle: string,
+  experience: string
 }
 
-const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => {
+const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle ,experience }) => {
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     phone: "",
     position: jobTitle,
-    experience: "",
+    experience: experience,
     resume: null,
     additionalInfo: "",
   })
   const [errors, setErrors] = useState<Errors>({})
+  const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
 
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const validatePhone = (phone: string): boolean => {
+    const phoneRegex = /^\+?[0-9]{10,15}$/
+    return phoneRegex.test(phone)
+  }
   const validateStep = (step: number): boolean => {
     const newErrors: Errors = {}
     switch (step) {
       case 1:
-        if (!formData.name) newErrors.name = "Name is required"
-        if (!formData.email) newErrors.email = "Email is required"
-        if (!formData.position) newErrors.position = "Apply position is required"
+        if (!formData.name.trim()) newErrors.name = "Name is required"
+        if (!formData.email.trim()) {
+          newErrors.email = "Email is required"
+        } else if (!validateEmail(formData.email)) {
+          newErrors.email = "Invalid email format"
+        }
+        if (!formData.phone.trim()) {
+          newErrors.phone = "Phone is required"
+        } else if (!validatePhone(formData.phone)) {
+          newErrors.phone = "Invalid phone number"
+        }
         break
       case 2:
         if (!formData.resume) newErrors.resume = "Resume is required"
-        if (!formData.experience) newErrors.experience = "Experience is required"
+        if (!formData.experience.trim()) {
+          newErrors.experience = "Experience is required"
+        } else {
+          const experienceValue = parseFloat(formData.experience)
+          const minExperience = parseFloat(experience)
+          if (isNaN(experienceValue) || experienceValue < minExperience || experienceValue > 50) {
+            newErrors.experience = `Experience must be a minimum of  ${minExperience} years for this role`
+          }
+        }
         break
       default:
         break
@@ -93,66 +124,56 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
     },
     maxFiles: 1,
   })
-
   const handleSubmit = async () => {
     if (validateStep(currentStep)) {
       try {
-        const resumeFile = formData.resume;
+        const resumeFile = formData.resume
         if (!resumeFile) {
-          alert("Please select a resume file to submit.");
-          return;
+          toast.error("Please select a resume file to submit.")
+          return
         }
 
-        let fileId = null;
+        let fileId = null
 
         try {
-          const uniqueFileId = ID.unique();
-          console.log("Uploading file with ID:", uniqueFileId);
-          const file = await storage.createFile(RESUME_STORAGE_ID, uniqueFileId, resumeFile);
+          const uniqueFileId = ID.unique()
+          const file = await storage.createFile(RESUME_STORAGE_ID, uniqueFileId, resumeFile)
 
-          if (!file || !file.$id) {
-            throw new Error("File upload failed - no file ID returned");
+          if (!file?.$id) {
+            throw new Error("File upload failed")
           }
 
-          fileId = file.$id;
-          console.log("File uploaded successfully:", fileId);
+          fileId = file.$id
         } catch (fileError) {
-          console.error("Error uploading file:", fileError);
-          alert("Failed to upload resume. Please try again.");
-          return;
+          console.error("Error uploading file:", fileError)
+          toast.error("Failed to upload resume. Please try again.")
+          return
         }
 
         try {
-          const uniqueDocId = ID.unique();
-          console.log("Creating document with ID:", uniqueDocId);
+          const uniqueDocId = ID.unique()
           const dataToSubmit = {
-            name: formData.name,
-            email: formData.email,
-            position: formData.position,
-            phone: formData.phone,
-            experience: formData.experience,
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            position: formData.position.trim(),
+            phone: formData.phone.trim(),
+            experience: formData.experience.trim(),
             resume: fileId,
-            additionalInfo: formData.additionalInfo,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          };
+            additionalInfo: formData.additionalInfo.trim()
+          }
 
-          console.log("Submitting data:", dataToSubmit);
           const document = await databases.createDocument(
             DATABASE_ID,
             APPLICANT_COLLECTION_ID,
             uniqueDocId,
             dataToSubmit
-          );
+          )
 
-          if (!document || !document.$id) {
-            throw new Error("Document creation failed - no document ID returned");
+          if (!document?.$id) {
+            throw new Error("Document creation failed")
           }
 
-          console.log("Application submitted successfully:", document);
-          alert("Application submitted successfully!");
-
-          // Reset form after successful submission
+          toast.success("Application submitted successfully!")
           setFormData({
             name: "",
             email: "",
@@ -161,30 +182,31 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
             experience: "",
             resume: null,
             additionalInfo: "",
-          });
-          setCurrentStep(1);
-
-          // Redirect to the root page
-          router.push("/");
+          })
+          setCurrentStep(1)
+          if (isMounted) {
+            // Refresh the page to enroute to dashboard after 3 seconds
+            setTimeout(() => {
+              window.location.href = "/"
+            }, 3000)
+          }
         } catch (docError) {
-          console.error("Error creating document:", docError);
-
+          console.error("Error creating document:", docError)
           if (fileId) {
             try {
-              await storage.deleteFile(RESUME_STORAGE_ID, fileId);
-              console.log("Rolled back uploaded file:", fileId);
+              await storage.deleteFile(RESUME_STORAGE_ID, fileId)
             } catch (deleteError) {
-              console.error("Error deleting file after failed submission:", deleteError);
+              console.error("Error deleting file:", deleteError)
             }
           }
-          alert("Failed to submit application. Please check your data and try again.");
+          toast.error("Failed to submit application. Please try again.")
         }
       } catch (error) {
-        console.error("Unexpected error in submission process:", error);
-        alert("An unexpected error occurred. Please try again.");
+        console.error("Unexpected error:", error)
+        toast.error("An unexpected error occurred. Please try again.")
       }
     }
-  };
+  }
 
   const renderStep = () => {
     switch (currentStep) {
@@ -194,7 +216,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
             <h2 className="text-2xl font-bold text-gray-800">Personal Information</h2>
             <div className="space-y-4">
               <input
-              id="name"
+                id="name"
                 type="text"
                 placeholder="Full Name"
                 className={`block w-full rounded-md border ${errors.name ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm`}
@@ -205,7 +227,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
               {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
 
               <input
-              id="email"
+                id="email"
                 type="email"
                 placeholder="Email Address"
                 className={`block w-full rounded-md border ${errors.email ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm`}
@@ -216,24 +238,24 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
               {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
               <input
-              id="phone"
+                id="phone"
                 type="tel"
                 placeholder="Phone Number"
-                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm"
+                className={`block w-full rounded-md border ${errors.phone ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm`}
                 value={formData.phone}
                 onChange={(e) => handleInputChange("phone", e.target.value)}
+                required
               />
+              {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
 
               <input
                 id='jobposition'
                 type="text"
                 placeholder="Apply Position"
-                className={`block w-full rounded-md border ${errors.position ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm`}
+                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm"
                 value={formData.position}
-                onChange={(e) => handleInputChange("position", e.target.value)}
-                required
+                disabled
               />
-              {errors.position && <p className="text-red-500 text-sm">{errors.position}</p>}
             </div>
           </div>
         )
@@ -243,13 +265,14 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
             <h2 className="text-2xl font-bold text-gray-800">Professional Information</h2>
             <div className="space-y-4">
               <input
-              id="experience"
+                id="experience"
                 type="text"
                 placeholder="Years of Experience"
-                className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm"
+                className={`block w-full rounded-md border ${errors.experience ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-[#2498ff] focus:outline-none focus:ring-[#2498ff] sm:text-sm`}
                 value={formData.experience}
                 onChange={(e) => handleInputChange("experience", e.target.value)}
               />
+              {errors.experience && <p className="text-red-500 text-sm">{errors.experience}</p>}
 
               <div className="flex flex-col space-y-2">
                 <label className="text-gray-700">Upload Resume</label>
@@ -309,7 +332,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
   }
 
   return (
-    <div className="relative bg-white py-6 px-2">
+    <div className="relative bg-white px-6 ">
       <div className="max-w-2xl mx-auto bg-white rounded-xl p-6 md:p-8 relative z-10">
         <div>
           <div className="flex items-center justify-between mb-4">
