@@ -6,6 +6,7 @@ import { FiUser, FiBriefcase, FiCheckCircle } from "react-icons/fi"
 import { useDropzone } from "react-dropzone"
 import { databases, ID, storage } from "../appwrite"
 import {  APPLICANT_COLLECTION_ID, DATABASE_ID, RESUME_STORAGE_ID  } from "../utils"
+import { useRouter } from "next/router"
 
 
 type FormData = {
@@ -38,6 +39,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
     additionalInfo: "",
   })
   const [errors, setErrors] = useState<Errors>({})
+  const router = useRouter()
 
   const validateStep = (step: number): boolean => {
     const newErrors: Errors = {}
@@ -49,6 +51,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
         break
       case 2:
         if (!formData.resume) newErrors.resume = "Resume is required"
+        if (!formData.experience) newErrors.experience = "Experience is required"
         break
       default:
         break
@@ -99,17 +102,18 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
           alert("Please select a resume file to submit.");
           return;
         }
-  
+
         let fileId = null;
-  
+
         try {
           const uniqueFileId = ID.unique();
+          console.log("Uploading file with ID:", uniqueFileId);
           const file = await storage.createFile(RESUME_STORAGE_ID, uniqueFileId, resumeFile);
-  
+
           if (!file || !file.$id) {
-            throw new Error("File upload failed");
+            throw new Error("File upload failed - no file ID returned");
           }
-  
+
           fileId = file.$id;
           console.log("File uploaded successfully:", fileId);
         } catch (fileError) {
@@ -117,9 +121,10 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
           alert("Failed to upload resume. Please try again.");
           return;
         }
-  
+
         try {
           const uniqueDocId = ID.unique();
+          console.log("Creating document with ID:", uniqueDocId);
           const dataToSubmit = {
             name: formData.name,
             email: formData.email,
@@ -131,21 +136,22 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           };
-  
+
+          console.log("Submitting data:", dataToSubmit);
           const document = await databases.createDocument(
             DATABASE_ID,
             APPLICANT_COLLECTION_ID,
             uniqueDocId,
             dataToSubmit
           );
-  
+
           if (!document || !document.$id) {
-            throw new Error("Document creation failed");
+            throw new Error("Document creation failed - no document ID returned");
           }
-  
+
           console.log("Application submitted successfully:", document);
           alert("Application submitted successfully!");
-  
+
           // Reset form after successful submission
           setFormData({
             name: "",
@@ -157,9 +163,12 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
             additionalInfo: "",
           });
           setCurrentStep(1);
+
+          // Redirect to the root page
+          router.push("/");
         } catch (docError) {
           console.error("Error creating document:", docError);
-  
+
           if (fileId) {
             try {
               await storage.deleteFile(RESUME_STORAGE_ID, fileId);
@@ -292,12 +301,6 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({ jobTitle }) => 
                 <p className="text-gray-600 text-sm">Additional Information: {formData.additionalInfo}</p>
               </div>
             </div>
-            {/* <button
-              onClick={handleSubmit}
-              className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Submit Application
-            </button> */}
           </div>
         )
       default:
